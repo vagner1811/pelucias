@@ -349,50 +349,46 @@
     ];
 
     function downloadCsvModel(){
-      const rows = [CSV_HEADERS.join(',')];
-      rows.push('stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,');
-      const blob = new Blob([rows.join('
-')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'modelo_produtos.csv'; a.click();
-      URL.revokeObjectURL(url);
-    }
+  const rows = [CSV_HEADERS.join(',')];
+  rows.push('stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,');
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'modelo_produtos.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
 
     function parseCsv(text){
-      // parser simples (sem aspas complexas). Para vírgulas dentro do texto, use ponto e vírgula ou substitua por hífen.
-      const lines = text.split(/
-?
-/).filter(Boolean);
-      const header = lines.shift().split(',').map(h=>h.trim());
-      const idx = (name)=> header.indexOf(name);
-      return lines.map(l=>{
-        const c = l.split(',');
-        const obj = {
-          id: c[idx('id')]||'',
-          titulo: c[idx('titulo')]||'',
-          categoria: c[idx('categoria')]||'',
-          condicao: c[idx('condicao')]||'',
-          preco: Number(c[idx('preco')]||'0'),
-          moeda: c[idx('moeda')]||'BRL',
-          tags: (c[idx('tags')]||'').split('|').filter(Boolean),
-          especie: c[idx('especie')]||'',
-          expressao: c[idx('expressao')]||'',
-          tamanho: c[idx('tamanho')]||'',
-          peso: c[idx('peso')]||'',
-          estado: c[idx('estado')]||'',
-          imagens: (c[idx('imagens')]||'').split('|').filter(Boolean),
-          criadoEm: c[idx('criadoEm')]||new Date().toISOString().slice(0,10),
-          descricao: c[idx('descricao')]||'',
-          status: c[idx('status')]||'Disponível',
-          frete: c[idx('frete')]||'',
-          retirada: c[idx('retirada')]||'',
-          linkExterno: c[idx('linkExterno')]||''
-        };
-        return obj;
-      });
-    }
-
+  // parser simples (sem aspas complexas). Para vírgulas dentro do texto, use ponto e vírgula ou substitua por hífen.
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  const header = lines.shift().split(',').map(h=>h.trim());
+  const idx = (name)=> header.indexOf(name);
+  return lines.map(l=>{
+    const c = l.split(',');
+    const obj = {
+      id: c[idx('id')]||'',
+      titulo: c[idx('titulo')]||'',
+      categoria: c[idx('categoria')]||'',
+      condicao: c[idx('condicao')]||'',
+      preco: Number(c[idx('preco')]||'0'),
+      moeda: c[idx('moeda')]||'BRL',
+      tags: (c[idx('tags')]||'').split('|').filter(Boolean),
+      especie: c[idx('especie')]||'',
+      expressao: c[idx('expressao')]||'',
+      tamanho: c[idx('tamanho')]||'',
+      peso: c[idx('peso')]||'',
+      estado: c[idx('estado')]||'',
+      imagens: (c[idx('imagens')]||'').split('|').filter(Boolean),
+      criadoEm: c[idx('criadoEm')]||new Date().toISOString().slice(0,10),
+      descricao: c[idx('descricao')]||'',
+      status: c[idx('status')]||'Disponível',
+      frete: c[idx('frete')]||'',
+      retirada: c[idx('retirada')]||'',
+      linkExterno: c[idx('linkExterno')]||''
+    };
+    return obj;
+  });
+}
     async function handleCsvFile(file){
       const text = await file.text();
       const items = parseCsv(text);
