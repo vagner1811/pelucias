@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vitrine de Pelúcias</title>
+  <meta name="description" content="Catálogo de pelúcias originais à venda – Feisty Pets, Disney e mais. Fale no WhatsApp para comprar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: dark light; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    dialog::backdrop { background: rgb(0 0 0 / .6); }
+    .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition; }
+    .btn-primary { @apply bg-emerald-500 hover:bg-emerald-400 text-emerald-950; }
+    .btn-neutral { @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700; }
+    .badge { @apply rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs; }
+  </style>
+</head>
+<body class="bg-neutral-950 text-neutral-100">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/70 border-b border-neutral-800">
+    <div class="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
+      <div class="size-9 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500"></div>
+      <div class="flex-1">
+        <h1 class="text-lg sm:text-2xl font-bold">Vitrine de Pelúcias</h1>
+        <p class="text-sm text-neutral-400">Feisty Pets, Disney e mais — estoque próprio</p>
+      </div>
+      <div class="hidden sm:flex items-center gap-2">
+        <a id="whatsHeader" target="_blank" rel="noopener" class="btn btn-primary">Falar no WhatsApp</a>
+        <button id="downloadCsvModel" class="btn btn-neutral" title="Baixar modelo CSV">Modelo CSV</button>
+        <label class="btn btn-neutral cursor-pointer" title="Importar CSV">
+          <input id="csvInput" type="file" accept=".csv" class="hidden" />
+          Importar CSV
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <!-- Controls -->
+  <section class="mx-auto max-w-7xl px-4 py-5">
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+      <label class="block lg:col-span-2">
+        <span class="text-xs text-neutral-400">Buscar</span>
+        <input id="q" type="search" placeholder="Ex.: feisty, ursinho, disney…" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500" />
+      </label>
+      <label class="block">
+        <span class="text-xs text-neutral-400">Categoria</span>
+        <select id="cat" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+          <option value="">Todas</option>
+          <option>Feisty Pets</option>
+          <option>Disney</option>
+          <option>Outras</option>
+        </select>
+      </label>
+      <label class="block">
+        <span class="text-xs text-neutral-400">Condição</span>
+        <select id="cond" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+          <option value="">Todas</option>
+          <option>Novo</option>
+          <option>Usado</option>
+        </select>
+      </label>
+      <label class="block">
+        <span class="text-xs text-neutral-400">Status</span>
+        <select id="status" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+          <option value="">Todos</option>
+          <option>Disponível</option>
+          <option>Vendido</option>
+          <option>Reservado</option>
+        </select>
+      </label>
+      <label class="block">
+        <span class="text-xs text-neutral-400">Ordenar por</span>
+        <select id="sort" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+          <option value="recent">Mais recentes</option>
+          <option value="price_asc">Menor preço</option>
+          <option value="price_desc">Maior preço</option>
+          <option value="alpha">A–Z</option>
+        </select>
+      </label>
+    </div>
+    <p class="mt-2 text-xs text-neutral-500">Dica: para usar suas fotos sem pagar hospedagem, coloque-as numa pasta <code>/images</code> do projeto e referencie por nome do arquivo no CSV (ex.: <code>stitch1.jpg|stitch2.jpg</code>).</p>
+  </section>
+
+  <!-- Grid -->
+  <main class="mx-auto max-w-7xl px-4 pb-24" id="grid" aria-live="polite"></main>
+
+  <!-- Footer -->
+  <footer class="border-t border-neutral-800">
+    <div class="mx-auto max-w-7xl px-4 py-10 grid sm:grid-cols-2 gap-6 items-center">
+      <div>
+        <h2 class="text-lg font-semibold">Quer comprar?</h2>
+        <p class="text-neutral-400">Clique em qualquer anúncio para falar no WhatsApp. Envio para todo o Brasil.</p>
+        <p class="text-neutral-500 text-sm mt-1">Frete: informe "frete a combinar" ou "retirar em mãos" no CSV para aparecer como etiqueta.</p>
+      </div>
+      <div class="flex sm:justify-end gap-2">
+        <a id="whatsFooter" target="_blank" rel="noopener" class="btn btn-primary">Falar no WhatsApp</a>
+        <label class="btn btn-neutral cursor-pointer">
+          <input id="csvInput2" type="file" accept=".csv" class="hidden" />
+          Importar CSV
+        </label>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox Dialog -->
+  <dialog id="viewer" class="rounded-2xl p-0 max-w-4xl w-[90vw] bg-neutral-950 border border-neutral-800">
+    <img id="viewerImg" alt="Pré-visualização" class="w-full h-auto rounded-2xl" />
+  </dialog>
+
+  <script>
+    // ======= CONFIGURAÇÕES RÁPIDAS =======
+    const WHATS_NUMBER = "SEU_NUMERO_COM_DDI"; // Ex.: 5511961580296 (sem + e sem espaços)
+    const STORE_CITY = "São Paulo, SP";
+
+    // ======= DADOS DE PRODUTO (exemplos) =======
+    /**
+     * Campos suportados (CSV e JS):
+     * id, titulo, categoria, condicao, preco, moeda, tags (separadas por |),
+     * especie, expressao, tamanho, peso, estado, imagens (nomes separados por |),
+     * criadoEm (AAAA-MM-DD), descricao, status (Disponível/Vendido/Reservado),
+     * frete (ex.: "frete a combinar"), retirada (ex.: "retirar em mãos"),
+     * linkExterno (Shopee/OLX/etc)
+     */
+    let produtos = [
+      {
+        id: "smokey-01",
+        titulo: "Feisty Pets – Sinister Smokey (Urso Negro)",
+        categoria: "Feisty Pets",
+        condicao: "Usado",
+        preco: 2999.90,
+        moeda: "BRL",
+        tags: ["raro", "colecionador"],
+        especie: "Urso",
+        expressao: "Raiva",
+        tamanho: "25 cm",
+        estado: "Com etiqueta, sem caixa",
+        imagens: ["images/smokey1.jpg"],
+        criadoEm: "2025-09-25",
+        descricao: "Peça rara e desejada pelos colecionadores. Original, mecanismo funcionando, ótimo estado.",
+        status: "Disponível",
+        frete: "frete a combinar",
+        retirada: "retirar em mãos",
+        linkExterno: ""
+      },
+      {
+        id: "stitch-01",
+        titulo: "Disney – Stitch Gigante (70 cm)",
+        categoria: "Disney",
+        condicao: "Novo",
+        preco: 449.00,
+        moeda: "BRL",
+        tags: ["gigante", "disney"],
+        especie: "Alien",
+        expressao: "Sorriso",
+        tamanho: "70 cm",
+        estado: "Lacrado",
+        imagens: ["images/stitch1.jpg"],
+        criadoEm: "2025-09-15",
+        descricao: "Stitch original, super macio. Perfeito para presente ou decoração.",
+        status: "Disponível",
+        frete: "",
+        retirada: "",
+        linkExterno: ""
+      }
+    ];
+
+    // ======= UTIL =======
+    const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    function buildWaLink(produto) {
+      const base = `https://wa.me/${WHATS_NUMBER}`;
+      const msg = encodeURIComponent(
+        `Olá! Tenho interesse no produto "${produto.titulo}" (ID: ${produto.id}). Pode me passar mais detalhes?`
+      );
+      return `${base}?text=${msg}`;
+    }
+
+    function el(tag, classes = "", attrs = {}) {
+      const e = document.createElement(tag);
+      if (classes) e.className = classes;
+      Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+      return e;
+    }
+
+    function applyStateToControls(state){
+      document.getElementById('q').value = state.q || '';
+      document.getElementById('cat').value = state.cat || '';
+      document.getElementById('cond').value = state.cond || '';
+      document.getElementById('status').value = state.status || '';
+      document.getElementById('sort').value = state.sort || 'recent';
+    }
+
+    function readState(){
+      const sp = new URLSearchParams(location.hash.slice(1));
+      return {
+        q: sp.get('q') || '',
+        cat: sp.get('cat') || '',
+        cond: sp.get('cond') || '',
+        status: sp.get('status') || '',
+        sort: sp.get('sort') || 'recent',
+      };
+    }
+
+    function writeState(state){
+      const sp = new URLSearchParams(state);
+      location.hash = sp.toString();
+    }
+
+    function filterAndSort(list, state){
+      let r = [...list];
+      if (state.q) {
+        const ql = state.q.toLowerCase();
+        r = r.filter(p => (
+          (p.titulo||'').toLowerCase().includes(ql) ||
+          (p.tags||[]).join(" ").toLowerCase().includes(ql) ||
+          (p.especie||'').toLowerCase().includes(ql) ||
+          (p.expressao||'').toLowerCase().includes(ql)
+        ));
+      }
+      if (state.cat) r = r.filter(p => p.categoria === state.cat);
+      if (state.cond) r = r.filter(p => p.condicao === state.cond);
+      if (state.status) r = r.filter(p => (p.status||'') === state.status);
+
+      switch(state.sort){
+        case 'price_asc': r.sort((a,b)=>a.preco-b.preco); break;
+        case 'price_desc': r.sort((a,b)=>b.preco-a.preco); break;
+        case 'alpha': r.sort((a,b)=>a.titulo.localeCompare(b.titulo)); break;
+        default: r.sort((a,b)=>new Date(b.criadoEm) - new Date(a.criadoEm));
+      }
+      return r;
+    }
+
+    function render(list){
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      if (!list.length){
+        const empty = el('div','text-center py-20 text-neutral-400');
+        empty.textContent = 'Nenhum item encontrado. Tente limpar os filtros ou buscar por outro termo.';
+        grid.appendChild(empty);
+        return;
+      }
+
+      const wrap = el('div','grid gap-4 sm:grid-cols-2 lg:grid-cols-3');
+      list.forEach(p => {
+        const card = el('article','group rounded-2xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 transition overflow-hidden');
+
+        const imgWrap = el('div','relative aspect-[4/3] bg-neutral-800 overflow-hidden');
+        const img = el('img','h-full w-full object-cover');
+        img.src = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
+        img.alt = p.titulo || 'Produto';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        imgWrap.appendChild(img);
+
+        // badges
+        if (p.condicao){
+          const badge = el('span','badge absolute top-2 left-2');
+          badge.textContent = p.condicao;
+          imgWrap.appendChild(badge);
+        }
+        if (p.status && p.status !== 'Disponível'){
+          const sold = el('span','badge absolute top-2 right-2');
+          sold.textContent = p.status.toUpperCase();
+          imgWrap.appendChild(sold);
+        }
+        if (p.frete){
+          const b2 = el('span','badge absolute bottom-2 left-2');
+          b2.textContent = p.frete;
+          imgWrap.appendChild(b2);
+        }
+        if (p.retirada){
+          const b3 = el('span','badge absolute bottom-2 right-2');
+          b3.textContent = p.retirada;
+          imgWrap.appendChild(b3);
+        }
+
+        // open viewer
+        imgWrap.addEventListener('click', ()=>{
+          const viewer = document.getElementById('viewer');
+          const viewerImg = document.getElementById('viewerImg');
+          viewerImg.src = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
+          viewer.showModal();
+          viewer.addEventListener('click', (e)=>{ if(e.target===viewer) viewer.close(); }, { once:true });
+        });
+
+        const content = el('div','p-4 space-y-2');
+        const title = el('h3','font-semibold line-clamp-2');
+        title.textContent = p.titulo || 'Sem título';
+
+        const meta = el('p','text-sm text-neutral-400');
+        const bits = [p.especie, p.expressao, p.tamanho].filter(Boolean).join(' • ');
+        meta.textContent = bits || ' ';
+
+        const priceRow = el('div','flex items-center justify-between gap-2');
+        const price = el('div','text-lg font-bold');
+        price.textContent = isFinite(p.preco) ? fmt.format(Number(p.preco)) : '—';
+        const city = el('span','text-xs text-neutral-400');
+        city.textContent = STORE_CITY;
+        priceRow.append(price, city);
+
+        const tags = el('div','flex flex-wrap gap-1');
+        (p.tags||[]).forEach(t=>{
+          const chip = el('span','rounded-full border border-neutral-700 px-2 py-0.5 text-xs text-neutral-300');
+          chip.textContent = t;
+          tags.appendChild(chip);
+        });
+
+        const actions = el('div','grid grid-cols-2 gap-2 pt-1');
+        const btnWa = el('a','btn btn-primary col-span-2', { href:'#', target:'_blank', rel:'noopener', 'aria-label': 'Falar no WhatsApp' });
+        btnWa.textContent = 'Falar no WhatsApp';
+        btnWa.addEventListener('click', (e)=>{ e.preventDefault(); window.open(buildWaLink(p), '_blank'); });
+
+        const btnExt = el('a','btn btn-neutral', { href: p.linkExterno||'#', target:'_blank', rel:'noopener' });
+        btnExt.textContent = 'Ver anúncio';
+        if (!p.linkExterno) { btnExt.classList.add('pointer-events-none','opacity-50'); }
+
+        const btnFotos = el('button','btn btn-neutral');
+        btnFotos.textContent = 'Mais fotos';
+        btnFotos.addEventListener('click', ()=>{
+          const viewer = document.getElementById('viewer');
+          const viewerImg = document.getElementById('viewerImg');
+          let idx = 0;
+          viewerImg.src = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
+          viewer.showModal();
+          viewer.addEventListener('click', (e)=>{ if(e.target===viewer) viewer.close(); }, { once:true });
+          viewer.addEventListener('keydown', (e)=>{
+            if (e.key==='ArrowRight' || e.key===' ') { idx = (idx+1) % (p.imagens?.length||1); viewerImg.src = p.imagens[idx]; }
+            if (e.key==='ArrowLeft') { idx = (idx-1 + (p.imagens?.length||1)) % (p.imagens?.length||1); viewerImg.src = p.imagens[idx]; }
+          }, { once:true });
+        });
+
+        if ((p.status||'') !== 'Disponível') {
+          btnWa.classList.add('pointer-events-none','opacity-50');
+        }
+
+        actions.append(btnExt, btnFotos, btnWa);
+
+        content.append(title, meta, priceRow, tags, actions);
+        card.append(imgWrap, content);
+        wrap.appendChild(card);
+      });
+
+      grid.appendChild(wrap);
+      document.getElementById('whatsHeader').href = `https://wa.me/${WHATS_NUMBER}`;
+      document.getElementById('whatsFooter').href = `https://wa.me/${WHATS_NUMBER}`;
+    }
+
+    // ======= CSV =======
+    const CSV_HEADERS = [
+      'id','titulo','categoria','condicao','preco','moeda','tags','especie','expressao','tamanho','peso','estado','imagens','criadoEm','descricao','status','frete','retirada','linkExterno'
+    ];
+
+    function downloadCsvModel(){
+      const rows = [CSV_HEADERS.join(',')];
+      rows.push('stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,');
+      const blob = new Blob([rows.join('
+')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'modelo_produtos.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function parseCsv(text){
+      // parser simples (sem aspas complexas). Para vírgulas dentro do texto, use ponto e vírgula ou substitua por hífen.
+      const lines = text.split(/?
+/).filter(Boolean);
+      const header = lines.shift().split(',').map(h=>h.trim());
+      const idx = (name)=> header.indexOf(name);
+      return lines.map(l=>{
+        const c = l.split(',');
+        const obj = {
+          id: c[idx('id')]||'',
+          titulo: c[idx('titulo')]||'',
+          categoria: c[idx('categoria')]||'',
+          condicao: c[idx('condicao')]||'',
+          preco: Number(c[idx('preco')]||'0'),
+          moeda: c[idx('moeda')]||'BRL',
+          tags: (c[idx('tags')]||'').split('|').filter(Boolean),
+          especie: c[idx('especie')]||'',
+          expressao: c[idx('expressao')]||'',
+          tamanho: c[idx('tamanho')]||'',
+          peso: c[idx('peso')]||'',
+          estado: c[idx('estado')]||'',
+          imagens: (c[idx('imagens')]||'').split('|').filter(Boolean),
+          criadoEm: c[idx('criadoEm')]||new Date().toISOString().slice(0,10),
+          descricao: c[idx('descricao')]||'',
+          status: c[idx('status')]||'Disponível',
+          frete: c[idx('frete')]||'',
+          retirada: c[idx('retirada')]||'',
+          linkExterno: c[idx('linkExterno')]||''
+        };
+        return obj;
+      });
+    }
+
+    async function handleCsvFile(file){
+      const text = await file.text();
+      const items = parseCsv(text);
+      // mescla, substituindo pelo mesmo id
+      const map = new Map(produtos.map(p=>[p.id,p]));
+      items.forEach(i=> map.set(i.id, i));
+      produtos = Array.from(map.values());
+      const st = readState();
+      render(filterAndSort(produtos, st));
+      alert(`Importados ${items.length} item(ns).`);
+    }
+
+    // ======= INIT =======
+    const controls = ['q','cat','cond','status','sort'];
+    controls.forEach(id => {
+      document.getElementById(id).addEventListener('input', ()=>{
+        const state = {
+          q: document.getElementById('q').value.trim(),
+          cat: document.getElementById('cat').value,
+          cond: document.getElementById('cond').value,
+          status: document.getElementById('status').value,
+          sort: document.getElementById('sort').value,
+        };
+        writeState(state);
+        render(filterAndSort(produtos, state));
+      })
+    });
+
+    window.addEventListener('hashchange', ()=>{
+      const st = readState();
+      applyStateToControls(st);
+      render(filterAndSort(produtos, st));
+    });
+
+    // CSV buttons
+    document.getElementById('downloadCsvModel').addEventListener('click', downloadCsvModel);
+    document.getElementById('csvInput').addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
+    document.getElementById('csvInput2').addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
+
+    // Primeira renderização
+    const initial = readState();
+    applyStateToControls(initial);
+    render(filterAndSort(produtos, initial));
+  </script>
+</body>
+</html>
