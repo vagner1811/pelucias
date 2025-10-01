@@ -114,7 +114,7 @@
 
   <script>
     // ======= CONFIGURAÇÕES RÁPIDAS =======
-    const WHATS_NUMBER = "SEU_NUMERO_COM_DDI"; // Ex.: 5511961580296 (sem + e sem espaços)
+    const WHATS_NUMBER = "5511961580296"; // Ex.: 5511961580296 (sem + e sem espaços)
     const STORE_CITY = "São Paulo, SP";
 
     // ======= DADOS DE PRODUTO (exemplos) =======
@@ -128,43 +128,23 @@
      */
     let produtos = [
       {
-        id: "smokey-01",
-        titulo: "Feisty Pets – Sinister Smokey (Urso Negro)",
-        categoria: "Feisty Pets",
-        condicao: "Usado",
-        preco: 2999.90,
+        id: "digimons",
+        titulo: "Coleção Digimons",
+        categoria: "Pelucias",
+        condicao: "Novo",
+        preco: 160.00,
         moeda: "BRL",
         tags: ["raro", "colecionador"],
-        especie: "Urso",
-        expressao: "Raiva",
+        especie: "Personagens",
+        expressao: "",
         tamanho: "25 cm",
-        estado: "Com etiqueta, sem caixa",
-        imagens: ["images/smokey1.jpg"],
+        estado: "Novo sem marcas",
+        imagens: ["images/digimons.jpg"],
         criadoEm: "2025-09-25",
-        descricao: "Peça rara e desejada pelos colecionadores. Original, mecanismo funcionando, ótimo estado.",
+        descricao: "Para colecionadores.",
         status: "Disponível",
         frete: "frete a combinar",
         retirada: "retirar em mãos",
-        linkExterno: ""
-      },
-      {
-        id: "stitch-01",
-        titulo: "Disney – Stitch Gigante (70 cm)",
-        categoria: "Disney",
-        condicao: "Novo",
-        preco: 449.00,
-        moeda: "BRL",
-        tags: ["gigante", "disney"],
-        especie: "Alien",
-        expressao: "Sorriso",
-        tamanho: "70 cm",
-        estado: "Lacrado",
-        imagens: ["images/stitch1.jpg"],
-        criadoEm: "2025-09-15",
-        descricao: "Stitch original, super macio. Perfeito para presente ou decoração.",
-        status: "Disponível",
-        frete: "",
-        retirada: "",
         linkExterno: ""
       }
     ];
@@ -369,7 +349,8 @@
 
     function parseCsv(text){
       // parser simples (sem aspas complexas). Para vírgulas dentro do texto, use ponto e vírgula ou substitua por hífen.
-      const lines = text.split(/?
+      const lines = text.split(/
+?
 /).filter(Boolean);
       const header = lines.shift().split(',').map(h=>h.trim());
       const idx = (name)=> header.indexOf(name);
