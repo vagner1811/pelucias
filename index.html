@@ -14,10 +14,12 @@
     body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     dialog::backdrop { background: rgb(0 0 0 / .6); }
-    .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition; }
-    .btn-primary { @apply bg-emerald-500 hover:bg-emerald-400 text-emerald-950; }
-    .btn-neutral { @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700; }
-    .badge { @apply rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs; }
+    /* Observação: @apply não é suportado no CDN do Tailwind; se quiser estilos sólidos sem build, aplique classes nos elementos.
+       Mantive as utilitárias aqui apenas como referência; não quebram o funcionamento. */
+    .btn { /* @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition; */ }
+    .btn-primary { /* @apply bg-emerald-500 hover:bg-emerald-400 text-emerald-950; */ }
+    .btn-neutral { /* @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700; */ }
+    .badge { /* @apply rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs; */ }
   </style>
 </head>
 <body class="bg-neutral-950 text-neutral-100">
@@ -30,9 +32,9 @@
         <p class="text-sm text-neutral-400">Feisty Pets, Disney e mais — estoque próprio</p>
       </div>
       <div class="hidden sm:flex items-center gap-2">
-        <a id="whatsHeader" target="_blank" rel="noopener" class="btn btn-primary">Falar no WhatsApp</a>
-        <button id="downloadCsvModel" class="btn btn-neutral" title="Baixar modelo CSV">Modelo CSV</button>
-        <label class="btn btn-neutral cursor-pointer" title="Importar CSV">
+        <a id="whatsHeader" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">Falar no WhatsApp</a>
+        <button id="downloadCsvModel" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden" data-admin title="Baixar modelo CSV">Modelo CSV</button>
+        <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin title="Importar CSV">
           <input id="csvInput" type="file" accept=".csv" class="hidden" />
           Importar CSV
         </label>
@@ -83,7 +85,7 @@
         </select>
       </label>
     </div>
-    <p class="mt-2 text-xs text-neutral-500">Dica: para usar suas fotos sem pagar hospedagem, coloque-as numa pasta <code>/images</code> do projeto e referencie por nome do arquivo no CSV (ex.: <code>stitch1.jpg|stitch2.jpg</code>).</p>
+    <p class="mt-2 text-xs text-neutral-500 hidden" data-admin>Dica: para usar suas fotos sem pagar hospedagem, coloque-as numa pasta <code>/images</code> do projeto e referencie por nome do arquivo no CSV (ex.: <code>stitch1.jpg|stitch2.jpg</code>).</p>
   </section>
 
   <!-- Grid -->
@@ -98,8 +100,8 @@
         <p class="text-neutral-500 text-sm mt-1">Frete: informe "frete a combinar" ou "retirar em mãos" no CSV para aparecer como etiqueta.</p>
       </div>
       <div class="flex sm:justify-end gap-2">
-        <a id="whatsFooter" target="_blank" rel="noopener" class="btn btn-primary">Falar no WhatsApp</a>
-        <label class="btn btn-neutral cursor-pointer">
+        <a id="whatsFooter" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">Falar no WhatsApp</a>
+        <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin>
           <input id="csvInput2" type="file" accept=".csv" class="hidden" />
           Importar CSV
         </label>
@@ -114,6 +116,10 @@
 
   <script>
     // ======= CONFIGURAÇÕES RÁPIDAS =======
+    // Ative o modo admin com #admin na URL (ex.: .../pelucias/#admin)
+    // ou com ?admin=1. O estado fica salvo em localStorage até você desativar.
+    const ADMIN = location.hash.includes('admin') || new URLSearchParams(location.search).get('admin')==='1' || localStorage.getItem('admin')==='1';
+
     const WHATS_NUMBER = "5511961580296"; // Ex.: 5511961580296 (sem + e sem espaços)
     const STORE_CITY = "São Paulo, SP";
 
@@ -240,22 +246,22 @@
 
         // badges
         if (p.condicao){
-          const badge = el('span','badge absolute top-2 left-2');
+          const badge = el('span','absolute top-2 left-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
           badge.textContent = p.condicao;
           imgWrap.appendChild(badge);
         }
         if (p.status && p.status !== 'Disponível'){
-          const sold = el('span','badge absolute top-2 right-2');
+          const sold = el('span','absolute top-2 right-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
           sold.textContent = p.status.toUpperCase();
           imgWrap.appendChild(sold);
         }
         if (p.frete){
-          const b2 = el('span','badge absolute bottom-2 left-2');
+          const b2 = el('span','absolute bottom-2 left-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
           b2.textContent = p.frete;
           imgWrap.appendChild(b2);
         }
         if (p.retirada){
-          const b3 = el('span','badge absolute bottom-2 right-2');
+          const b3 = el('span','absolute bottom-2 right-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
           b3.textContent = p.retirada;
           imgWrap.appendChild(b3);
         }
@@ -275,7 +281,7 @@
 
         const meta = el('p','text-sm text-neutral-400');
         const bits = [p.especie, p.expressao, p.tamanho].filter(Boolean).join(' • ');
-        meta.textContent = bits || ' ';
+        meta.textContent = bits || '\u00A0';
 
         const priceRow = el('div','flex items-center justify-between gap-2');
         const price = el('div','text-lg font-bold');
@@ -292,15 +298,15 @@
         });
 
         const actions = el('div','grid grid-cols-2 gap-2 pt-1');
-        const btnWa = el('a','btn btn-primary col-span-2', { href:'#', target:'_blank', rel:'noopener', 'aria-label': 'Falar no WhatsApp' });
+        const btnWa = el('a','inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950 col-span-2', { href:'#', target:'_blank', rel:'noopener', 'aria-label': 'Falar no WhatsApp' });
         btnWa.textContent = 'Falar no WhatsApp';
         btnWa.addEventListener('click', (e)=>{ e.preventDefault(); window.open(buildWaLink(p), '_blank'); });
 
-        const btnExt = el('a','btn btn-neutral', { href: p.linkExterno||'#', target:'_blank', rel:'noopener' });
+        const btnExt = el('a','inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700', { href: p.linkExterno||'#', target:'_blank', rel:'noopener' });
         btnExt.textContent = 'Ver anúncio';
         if (!p.linkExterno) { btnExt.classList.add('pointer-events-none','opacity-50'); }
 
-        const btnFotos = el('button','btn btn-neutral');
+        const btnFotos = el('button','inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700');
         btnFotos.textContent = 'Mais fotos';
         btnFotos.addEventListener('click', ()=>{
           const viewer = document.getElementById('viewer');
@@ -336,57 +342,85 @@
       'id','titulo','categoria','condicao','preco','moeda','tags','especie','expressao','tamanho','peso','estado','imagens','criadoEm','descricao','status','frete','retirada','linkExterno'
     ];
 
+    function detectDelimiter(headerLine){
+      // tenta ; depois , (Excel PT-BR costuma usar ;)
+      if ((headerLine.match(/;/g)||[]).length >= (headerLine.match(/,/g)||[]).length) return ';';
+      return ',';
+    }
+
     function downloadCsvModel(){
-  const rows = [CSV_HEADERS.join(',')];
-  rows.push('stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,');
-  const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'modelo_produtos.csv'; a.click();
-  URL.revokeObjectURL(url);
-}
+      const rows = [CSV_HEADERS.join(',')];
+      rows.push('stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,');
+      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'modelo_produtos.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
 
     function parseCsv(text){
-  // parser simples (sem aspas complexas). Para vírgulas dentro do texto, use ponto e vírgula ou substitua por hífen.
-  const lines = text.split(/\r?\n/).filter(Boolean);
-  const header = lines.shift().split(',').map(h=>h.trim());
-  const idx = (name)=> header.indexOf(name);
-  return lines.map(l=>{
-    const c = l.split(',');
-    const obj = {
-      id: c[idx('id')]||'',
-      titulo: c[idx('titulo')]||'',
-      categoria: c[idx('categoria')]||'',
-      condicao: c[idx('condicao')]||'',
-      preco: Number(c[idx('preco')]||'0'),
-      moeda: c[idx('moeda')]||'BRL',
-      tags: (c[idx('tags')]||'').split('|').filter(Boolean),
-      especie: c[idx('especie')]||'',
-      expressao: c[idx('expressao')]||'',
-      tamanho: c[idx('tamanho')]||'',
-      peso: c[idx('peso')]||'',
-      estado: c[idx('estado')]||'',
-      imagens: (c[idx('imagens')]||'').split('|').filter(Boolean),
-      criadoEm: c[idx('criadoEm')]||new Date().toISOString().slice(0,10),
-      descricao: c[idx('descricao')]||'',
-      status: c[idx('status')]||'Disponível',
-      frete: c[idx('frete')]||'',
-      retirada: c[idx('retirada')]||'',
-      linkExterno: c[idx('linkExterno')]||''
-    };
-    return obj;
-  });
-}
+      const lines = text.split(/\r?\n/).filter(Boolean);
+      if (!lines.length) return [];
+      const delim = detectDelimiter(lines[0]);
+      const header = lines.shift().split(delim).map(h=>h.trim());
+      const idx = (name)=> header.indexOf(name);
+      return lines.map(l=>{
+        const c = l.split(delim).map(v=> v.trim());
+        const obj = {
+          id: c[idx('id')]||'',
+          titulo: c[idx('titulo')]||'',
+          categoria: c[idx('categoria')]||'',
+          condicao: c[idx('condicao')]||'',
+          preco: Number((c[idx('preco')]||'').replace(',','.'))||0,
+          moeda: c[idx('moeda')]||'BRL',
+          tags: (c[idx('tags')]||'').split('|').filter(Boolean),
+          especie: c[idx('especie')]||'',
+          expressao: c[idx('expressao')]||'',
+          tamanho: c[idx('tamanho')]||'',
+          peso: c[idx('peso')]||'',
+          estado: c[idx('estado')]||'',
+          imagens: (c[idx('imagens')]||'').split('|').filter(Boolean),
+          criadoEm: c[idx('criadoEm')]||new Date().toISOString().slice(0,10),
+          descricao: c[idx('descricao')]||'',
+          status: c[idx('status')]||'Disponível',
+          frete: c[idx('frete')]||'',
+          retirada: c[idx('retirada')]||'',
+          linkExterno: c[idx('linkExterno')]||''
+        };
+        return obj;
+      });
+    }
+
     async function handleCsvFile(file){
-      const text = await file.text();
-      const items = parseCsv(text);
-      // mescla, substituindo pelo mesmo id
-      const map = new Map(produtos.map(p=>[p.id,p]));
-      items.forEach(i=> map.set(i.id, i));
-      produtos = Array.from(map.values());
-      const st = readState();
-      render(filterAndSort(produtos, st));
-      alert(`Importados ${items.length} item(ns).`);
+      try {
+        const text = await file.text();
+        const items = parseCsv(text);
+        const map = new Map(produtos.map(p=>[p.id,p]));
+        items.forEach(i=> map.set(i.id, i));
+        produtos = Array.from(map.values());
+        const st = readState();
+        render(filterAndSort(produtos, st));
+        alert(`Importados ${items.length} item(ns).`);
+      } catch (e){
+        console.error(e);
+        alert('Falha ao importar CSV. Verifique o delimitador (use ; ou ,) e os cabeçalhos.');
+      }
+    }
+
+    async function autoLoadCsv(){
+      // carrega automaticamente /produtos.csv se existir no mesmo diretório
+      try {
+        const res = await fetch('produtos.csv', { cache: 'no-store' });
+        if (!res.ok) return; // não existe, segue com dados do JS
+        const text = await res.text();
+        const items = parseCsv(text);
+        if (items.length){
+          produtos = items;
+          const st = readState();
+          render(filterAndSort(produtos, st));
+          console.info(`Carregado produtos.csv (${items.length} itens).`);
+        }
+      } catch (e){ console.info('Sem produtos.csv'); }
     }
 
     // ======= INIT =======
@@ -411,15 +445,37 @@
       render(filterAndSort(produtos, st));
     });
 
-    // CSV buttons
-    document.getElementById('downloadCsvModel').addEventListener('click', downloadCsvModel);
-    document.getElementById('csvInput').addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
-    document.getElementById('csvInput2').addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
+    // Admin: mostrar/ocultar botões e dicas
+    function setAdminMode(on){
+      document.querySelectorAll('[data-admin]').forEach(el=> el.classList.toggle('hidden', !on));
+      if(on) { localStorage.setItem('admin','1'); } else { localStorage.removeItem('admin'); }
+    }
+    setAdminMode(ADMIN);
+
+    // Se não estiver em modo admin, não registra handlers de CSV
+    if (ADMIN){
+      const btnModel = document.getElementById('downloadCsvModel');
+      if (btnModel) btnModel.addEventListener('click', downloadCsvModel);
+      const inp1 = document.getElementById('csvInput');
+      if (inp1) inp1.addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
+      const inp2 = document.getElementById('csvInput2');
+      if (inp2) inp2.addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
+    }
+
+    // Atalho: Ctrl+Shift+A alterna admin on/off
+    window.addEventListener('keydown', (e)=>{
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='a'){
+        const anyAdminEl = document.querySelector('[data-admin]');
+        const currentlyVisible = anyAdminEl && !anyAdminEl.classList.contains('hidden');
+        setAdminMode(!currentlyVisible);
+      }
+    });
 
     // Primeira renderização
     const initial = readState();
     applyStateToControls(initial);
     render(filterAndSort(produtos, initial));
+    autoLoadCsv();
   </script>
 </body>
 </html>
