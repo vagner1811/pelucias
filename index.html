@@ -10,35 +10,10 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            :root {
-                color-scheme: dark light;
-            }
-            body {
-                font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-            }
-            .line-clamp-2 {
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
-            }
-            dialog::backdrop {
-                background: rgb(0 0 0 / 0.6);
-            }
-            /* Observação: @apply não é suportado no CDN do Tailwind; se quiser estilos sólidos sem build, aplique classes nos elementos.
-       Mantive as utilitárias aqui apenas como referência; não quebram o funcionamento. */
-            .btn {
-                /* @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition; */
-            }
-            .btn-primary {
-                /* @apply bg-emerald-500 hover:bg-emerald-400 text-emerald-950; */
-            }
-            .btn-neutral {
-                /* @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700; */
-            }
-            .badge {
-                /* @apply rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs; */
-            }
+            :root { color-scheme: dark light; }
+            body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+            .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            dialog::backdrop { background: rgb(0 0 0 / 0.6); }
         </style>
     </head>
     <body class="bg-neutral-950 text-neutral-100">
@@ -54,19 +29,10 @@
                     <a id="whatsHeader" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">
                         Falar no WhatsApp
                     </a>
-                    <button
-                        id="downloadCsvModel"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden"
-                        data-admin
-                        title="Baixar modelo CSV"
-                    >
+                    <button id="downloadCsvModel" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden" data-admin title="Baixar modelo CSV">
                         Modelo CSV
                     </button>
-                    <label
-                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden"
-                        data-admin
-                        title="Importar CSV"
-                    >
+                    <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin title="Importar CSV">
                         <input id="csvInput" type="file" accept=".csv" class="hidden" />
                         Importar CSV
                     </label>
@@ -137,10 +103,7 @@
                     <a id="whatsFooter" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">
                         Falar no WhatsApp
                     </a>
-                    <label
-                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden"
-                        data-admin
-                    >
+                    <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin>
                         <input id="csvInput2" type="file" accept=".csv" class="hidden" />
                         Importar CSV
                     </label>
@@ -149,28 +112,17 @@
         </footer>
 
         <!-- Lightbox Dialog -->
-        <dialog id="viewer" class="rounded-2xl p-0 max-w-4xl w-[90vw] bg-neutral-950 border border-neutral-800">
+        <dialog id="viewer" class="rounded-2xl p-0 max-w-4xl w-[90vw] bg-neutral-950 border border-neutral-800 relative">
             <img id="viewerImg" alt="Pré-visualização" class="w-full h-auto rounded-2xl" />
         </dialog>
 
         <script>
             // ======= CONFIGURAÇÕES RÁPIDAS =======
-            // Ative o modo admin com #admin na URL (ex.: .../pelucias/#admin)
-            // ou com ?admin=1. O estado fica salvo em localStorage até você desativar.
             const ADMIN = location.hash.includes("admin") || new URLSearchParams(location.search).get("admin") === "1" || localStorage.getItem("admin") === "1";
-
-            const WHATS_NUMBER = "5511961580296"; // Ex.: 5511961580296 (sem + e sem espaços)
+            const WHATS_NUMBER = "5511961580296";
             const STORE_CITY = "São Paulo, SP";
 
-            // ======= DADOS DE PRODUTO (exemplos) =======
-            /**
-             * Campos suportados (CSV e JS):
-             * id, titulo, categoria, condicao, preco, moeda, tags (separadas por |),
-             * especie, expressao, tamanho, peso, estado, imagens (nomes separados por |),
-             * criadoEm (AAAA-MM-DD), descricao, status (Disponível/Vendido/Reservado),
-             * frete (ex.: "frete a combinar"), retirada (ex.: "retirar em mãos"),
-             * linkExterno (Shopee/OLX/etc)
-             */
+            // ======= DADOS DE PRODUTO =======
             let produtos = [
                 {
                     id: "digimons",
@@ -678,7 +630,6 @@
                     linkExterno: "",
                 },
             ];
-
             // ======= UTIL =======
             const fmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -705,13 +656,7 @@
 
             function readState() {
                 const sp = new URLSearchParams(location.hash.slice(1));
-                return {
-                    q: sp.get("q") || "",
-                    cat: sp.get("cat") || "",
-                    cond: sp.get("cond") || "",
-                    status: sp.get("status") || "",
-                    sort: sp.get("sort") || "recent",
-                };
+                return { q: sp.get("q") || "", cat: sp.get("cat") || "", cond: sp.get("cond") || "", status: sp.get("status") || "", sort: sp.get("sort") || "recent" };
             }
 
             function writeState(state) {
@@ -719,6 +664,70 @@
                 location.hash = sp.toString();
             }
 
+            // ======= VIEWER MULTIFOTOS =======
+            function openViewer(p, startIndex = 0){
+              const viewer = document.getElementById('viewer');
+              const viewerImg = document.getElementById('viewerImg');
+              if (!p.imagens || !p.imagens.length){
+                viewerImg.src = '';
+                viewer.showModal();
+                return;
+              }
+              let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
+
+              function show(i){
+                idx = (i + p.imagens.length) % p.imagens.length;
+                viewerImg.src = p.imagens[idx];
+              }
+
+              // cria botões de navegação se ainda não existem
+              let btnPrev = viewer.querySelector('[data-nav="prev"]');
+              let btnNext = viewer.querySelector('[data-nav="next"]');
+              if (!btnPrev){
+                btnPrev = document.createElement('button');
+                btnPrev.dataset.nav = 'prev';
+                btnPrev.className = 'absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2';
+                btnPrev.textContent = '‹';
+                viewer.appendChild(btnPrev);
+              }
+              if (!btnNext){
+                btnNext = document.createElement('button');
+                btnNext.dataset.nav = 'next';
+                btnNext.className = 'absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2';
+                btnNext.textContent = '›';
+                viewer.appendChild(btnNext);
+              }
+
+              // handlers
+              const onKey = (e)=>{
+                if (e.key === 'ArrowRight' || e.key === ' ') show(idx+1);
+                if (e.key === 'ArrowLeft') show(idx-1);
+                if (e.key === 'Escape') cleanup();
+              };
+              const onBackdrop = (e)=>{ if (e.target === viewer) cleanup(); };
+              const onPrev = ()=> show(idx-1);
+              const onNext = ()=> show(idx+1);
+              const onImgClick = ()=> show(idx+1);
+
+              function cleanup(){
+                viewer.close();
+                document.removeEventListener('keydown', onKey);
+                viewer.removeEventListener('click', onBackdrop);
+                btnPrev.removeEventListener('click', onPrev);
+                btnNext.removeEventListener('click', onNext);
+                viewerImg.removeEventListener('click', onImgClick);
+              }
+
+              show(idx);
+              viewer.showModal();
+              document.addEventListener('keydown', onKey);
+              viewer.addEventListener('click', onBackdrop);
+              btnPrev.addEventListener('click', onPrev);
+              btnNext.addEventListener('click', onNext);
+              viewerImg.addEventListener('click', onImgClick);
+            }
+
+            // ======= FILTRO/ORDENAÇÃO & RENDER =======
             function filterAndSort(list, state) {
                 let r = [...list];
                 if (state.q) {
@@ -730,17 +739,10 @@
                 if (state.status) r = r.filter((p) => (p.status || "") === state.status);
 
                 switch (state.sort) {
-                    case "price_asc":
-                        r.sort((a, b) => a.preco - b.preco);
-                        break;
-                    case "price_desc":
-                        r.sort((a, b) => b.preco - a.preco);
-                        break;
-                    case "alpha":
-                        r.sort((a, b) => a.titulo.localeCompare(b.titulo));
-                        break;
-                    default:
-                        r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+                    case "price_asc": r.sort((a, b) => a.preco - b.preco); break;
+                    case "price_desc": r.sort((a, b) => b.preco - a.preco); break;
+                    case "alpha": r.sort((a, b) => a.titulo.localeCompare(b.titulo)); break;
+                    default: r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
                 }
                 return r;
             }
@@ -790,20 +792,8 @@
                         imgWrap.appendChild(b3);
                     }
 
-                    // open viewer
-                    imgWrap.addEventListener("click", () => {
-                        const viewer = document.getElementById("viewer");
-                        const viewerImg = document.getElementById("viewerImg");
-                        viewerImg.src = p.imagens && p.imagens[0] ? p.imagens[0] : "";
-                        viewer.showModal();
-                        viewer.addEventListener(
-                            "click",
-                            (e) => {
-                                if (e.target === viewer) viewer.close();
-                            },
-                            { once: true }
-                        );
-                    });
+                    // abrir viewer (multi-fotos)
+                    imgWrap.addEventListener("click", () => openViewer(p, 0));
 
                     const content = el("div", "p-4 space-y-2");
                     const title = el("h3", "font-semibold line-clamp-2");
@@ -811,7 +801,7 @@
 
                     const meta = el("p", "text-sm text-neutral-400");
                     const bits = [p.especie, p.expressao, p.tamanho].filter(Boolean).join(" • ");
-                    meta.textContent = bits || "\u00A0";
+                    meta.textContent = bits || " ";
 
                     const priceRow = el("div", "flex items-center justify-between gap-2");
                     const price = el("div", "text-lg font-bold");
@@ -829,64 +819,24 @@
 
                     const actions = el("div", "grid grid-cols-2 gap-2 pt-1");
                     const btnWa = el("a", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950 col-span-2", {
-                        href: "#",
-                        target: "_blank",
-                        rel: "noopener",
-                        "aria-label": "Falar no WhatsApp",
+                        href: "#", target: "_blank", rel: "noopener", "aria-label": "Falar no WhatsApp",
                     });
                     btnWa.textContent = "Falar no WhatsApp";
-                    btnWa.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        window.open(buildWaLink(p), "_blank");
-                    });
+                    btnWa.addEventListener("click", (e) => { e.preventDefault(); window.open(buildWaLink(p), "_blank"); });
 
                     const btnExt = el("a", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700", {
-                        href: p.linkExterno || "#",
-                        target: "_blank",
-                        rel: "noopener",
+                        href: p.linkExterno || "#", target: "_blank", rel: "noopener"
                     });
                     btnExt.textContent = "Ver anúncio";
-                    if (!p.linkExterno) {
-                        btnExt.classList.add("pointer-events-none", "opacity-50");
-                    }
+                    if (!p.linkExterno) btnExt.classList.add("pointer-events-none", "opacity-50");
 
                     const btnFotos = el("button", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700");
                     btnFotos.textContent = "Mais fotos";
-                    btnFotos.addEventListener("click", () => {
-                        const viewer = document.getElementById("viewer");
-                        const viewerImg = document.getElementById("viewerImg");
-                        let idx = 0;
-                        viewerImg.src = p.imagens && p.imagens[0] ? p.imagens[0] : "";
-                        viewer.showModal();
-                        viewer.addEventListener(
-                            "click",
-                            (e) => {
-                                if (e.target === viewer) viewer.close();
-                            },
-                            { once: true }
-                        );
-                        viewer.addEventListener(
-                            "keydown",
-                            (e) => {
-                                if (e.key === "ArrowRight" || e.key === " ") {
-                                    idx = (idx + 1) % (p.imagens?.length || 1);
-                                    viewerImg.src = p.imagens[idx];
-                                }
-                                if (e.key === "ArrowLeft") {
-                                    idx = (idx - 1 + (p.imagens?.length || 1)) % (p.imagens?.length || 1);
-                                    viewerImg.src = p.imagens[idx];
-                                }
-                            },
-                            { once: true }
-                        );
-                    });
+                    btnFotos.addEventListener("click", () => openViewer(p, 0));
 
-                    if ((p.status || "") !== "Disponível") {
-                        btnWa.classList.add("pointer-events-none", "opacity-50");
-                    }
+                    if ((p.status || "") !== "Disponível") btnWa.classList.add("pointer-events-none", "opacity-50");
 
                     actions.append(btnExt, btnFotos, btnWa);
-
                     content.append(title, meta, priceRow, tags, actions);
                     card.append(imgWrap, content);
                     wrap.appendChild(card);
@@ -901,7 +851,6 @@
             const CSV_HEADERS = ["id", "titulo", "categoria", "condicao", "preco", "moeda", "tags", "especie", "expressao", "tamanho", "peso", "estado", "imagens", "criadoEm", "descricao", "status", "frete", "retirada", "linkExterno"];
 
             function detectDelimiter(headerLine) {
-                // tenta ; depois , (Excel PT-BR costuma usar ;)
                 if ((headerLine.match(/;/g) || []).length >= (headerLine.match(/,/g) || []).length) return ";";
                 return ",";
             }
@@ -909,27 +858,25 @@
             function downloadCsvModel() {
                 const rows = [CSV_HEADERS.join(",")];
                 rows.push("stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,");
-                const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+                const blob = new Blob([rows.join("
+")], { type: "text/csv;charset=utf-8;" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
-                a.href = url;
-                a.download = "modelo_produtos.csv";
-                a.click();
+                a.href = url; a.download = "modelo_produtos.csv"; a.click();
                 URL.revokeObjectURL(url);
             }
 
             function parseCsv(text) {
-                const lines = text.split(/\r?\n/).filter(Boolean);
+                const lines = text.split(/
+?
+/).filter(Boolean);
                 if (!lines.length) return [];
                 const delim = detectDelimiter(lines[0]);
-                const header = lines
-                    .shift()
-                    .split(delim)
-                    .map((h) => h.trim());
+                const header = lines.shift().split(delim).map((h) => h.trim());
                 const idx = (name) => header.indexOf(name);
                 return lines.map((l) => {
                     const c = l.split(delim).map((v) => v.trim());
-                    const obj = {
+                    return {
                         id: c[idx("id")] || "",
                         titulo: c[idx("titulo")] || "",
                         categoria: c[idx("categoria")] || "",
@@ -950,7 +897,6 @@
                         retirada: c[idx("retirada")] || "",
                         linkExterno: c[idx("linkExterno")] || "",
                     };
-                    return obj;
                 });
             }
 
@@ -971,10 +917,9 @@
             }
 
             async function autoLoadCsv() {
-                // carrega automaticamente /produtos.csv se existir no mesmo diretório
                 try {
                     const res = await fetch("produtos.csv", { cache: "no-store" });
-                    if (!res.ok) return; // não existe, segue com dados do JS
+                    if (!res.ok) return;
                     const text = await res.text();
                     const items = parseCsv(text);
                     if (items.length) {
@@ -983,9 +928,7 @@
                         render(filterAndSort(produtos, st));
                         console.info(`Carregado produtos.csv (${items.length} itens).`);
                     }
-                } catch (e) {
-                    console.info("Sem produtos.csv");
-                }
+                } catch (e) { console.info("Sem produtos.csv"); }
             }
 
             // ======= INIT =======
@@ -1010,34 +953,21 @@
                 render(filterAndSort(produtos, st));
             });
 
-            // Admin: mostrar/ocultar botões e dicas
             function setAdminMode(on) {
                 document.querySelectorAll("[data-admin]").forEach((el) => el.classList.toggle("hidden", !on));
-                if (on) {
-                    localStorage.setItem("admin", "1");
-                } else {
-                    localStorage.removeItem("admin");
-                }
+                if (on) localStorage.setItem("admin", "1"); else localStorage.removeItem("admin");
             }
             setAdminMode(ADMIN);
 
-            // Se não estiver em modo admin, não registra handlers de CSV
             if (ADMIN) {
                 const btnModel = document.getElementById("downloadCsvModel");
                 if (btnModel) btnModel.addEventListener("click", downloadCsvModel);
                 const inp1 = document.getElementById("csvInput");
-                if (inp1)
-                    inp1.addEventListener("change", (e) => {
-                        if (e.target.files[0]) handleCsvFile(e.target.files[0]);
-                    });
+                if (inp1) inp1.addEventListener("change", (e) => { if (e.target.files[0]) handleCsvFile(e.target.files[0]); });
                 const inp2 = document.getElementById("csvInput2");
-                if (inp2)
-                    inp2.addEventListener("change", (e) => {
-                        if (e.target.files[0]) handleCsvFile(e.target.files[0]);
-                    });
+                if (inp2) inp2.addEventListener("change", (e) => { if (e.target.files[0]) handleCsvFile(e.target.files[0]); });
             }
 
-            // Atalho: Ctrl+Shift+A alterna admin on/off
             window.addEventListener("keydown", (e) => {
                 if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
                     const anyAdminEl = document.querySelector("[data-admin]");
