@@ -23,43 +23,35 @@
                 overflow: hidden;
             }
         
-            /* backdrop do dialog quando aberto */
-            #viewer::backdrop {
-                background: rgba(0, 0, 0, 0.6);
-            }
-        
-            /* Caixa do viewer — não fica visível até abrir */
+            /* === VIEWER (Lightbox) === */
             #viewer {
-                padding: 0;
+                position: fixed;
+                inset: 0;
+                display: none; /* inicia oculto */
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.75);
                 border: none;
-                background: transparent;
-                width: min(90vw, 1200px);
-                max-width: 96vw;
-                max-height: 90vh;
-                overflow: hidden;
-                border-radius: 1rem;
+                margin: 0;
+                padding: 0;
+                z-index: 9999;
             }
-        
-            /* Imagem centralizada e ajustada */
+            #viewer[open] {
+                display: flex; /* só aparece quando aberto */
+            }
             #viewerImg {
                 max-width: 90vw;
                 max-height: 90vh;
                 width: auto;
                 height: auto;
                 object-fit: contain;
-                display: block;
                 border-radius: 1rem;
+                margin: auto;
+                display: block;
             }
-        
-            /* Botões de navegação (setas e fechar) */
             #viewer [data-nav] {
-                pointer-events: auto;
                 position: absolute;
                 z-index: 10;
-            }
-            #viewer [data-nav="prev"],
-            #viewer [data-nav="next"],
-            #viewer [data-nav="close"] {
                 border: 1px solid rgb(64 64 64);
                 background: rgba(24, 24, 24, 0.8);
                 border-radius: 9999px;
@@ -78,7 +70,7 @@
                 right: 0.75rem;
             }
             #viewer [data-nav="close"] {
-                top: 0.5rem;
+                top: 0.75rem;
                 right: 0.75rem;
                 padding: 0.25rem 0.5rem;
             }
@@ -745,101 +737,177 @@
             }
 
             // ======= VIEWER MULTIFOTOS =======
-            function openViewer(p, startIndex = 0) {
-                const viewer = document.getElementById("viewer");
-                const viewerImg = document.getElementById("viewerImg");
+O ChatGPT disse:
 
-                // 1) Não abra se não houver imagens
-                if (!Array.isArray(p.imagens) || p.imagens.length === 0) return;
+perfeito — entendi o que aconteceu.
+o comportamento que você quer é:
 
-                const hasMany = p.imagens.length > 1;
-                let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
+✅ o modal abrir onde o usuário está (sem rolar pro topo)
 
-                // 2) Cria botões (setas + fechar) uma vez
-                let btnPrev = viewer.querySelector('[data-nav="prev"]');
-                let btnNext = viewer.querySelector('[data-nav="next"]');
-                let btnClose = viewer.querySelector('[data-nav="close"]');
+✅ a imagem abrir centralizada e proporcional (sem cortar, nem desalinhada)
 
-                if (!btnPrev) {
-                    btnPrev = document.createElement("button");
-                    btnPrev.dataset.nav = "prev";
-                    btnPrev.className = "absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
-                    btnPrev.textContent = "‹";
-                    viewer.appendChild(btnPrev);
-                }
-                if (!btnNext) {
-                    btnNext = document.createElement("button");
-                    btnNext.dataset.nav = "next";
-                    btnNext.className = "absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
-                    btnNext.textContent = "›";
-                    viewer.appendChild(btnNext);
-                }
-                if (!btnClose) {
-                    btnClose = document.createElement("button");
-                    btnClose.dataset.nav = "close";
-                    btnClose.className = "absolute top-2 right-2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-1";
-                    btnClose.textContent = "✕";
-                    btnClose.title = "Fechar";
-                    viewer.appendChild(btnClose);
-                }
+✅ o fundo escurecido como antes
 
-                // 3) Mostra/oculta setas conforme quantidade
-                btnPrev.style.display = hasMany ? "" : "none";
-                btnNext.style.display = hasMany ? "" : "none";
+pra isso, o segredo é não usar showModal() (porque ele força o foco e o scroll pro topo) e usar show() — mas junto com CSS fixo pra cobrir a tela.
+abaixo está o trecho corrigido da função openViewer() e o CSS ajustado pra centralizar corretamente:
 
-                // 4) Função para trocar a imagem
-                const show = (i) => {
-                    idx = (i + p.imagens.length) % p.imagens.length;
-                    viewerImg.src = p.imagens[idx];
-                    viewerImg.style.maxWidth = "90vw";
-                    viewerImg.style.maxHeight = "90vh";
-                    viewerImg.style.objectFit = "contain";
-                };
+🧩 CSS final do viewer
 
-                // 5) Eventos
-                const onKey = (e) => {
-                    if (e.key === "Escape") cleanup();
-                    if (!hasMany) return;
-                    if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
-                    if (e.key === "ArrowLeft") show(idx - 1);
-                };
-                const onBackdrop = (e) => {
-                    if (e.target === viewer) cleanup(); // clique fora fecha
-                };
-                const onPrev = () => show(idx - 1);
-                const onNext = () => show(idx + 1);
-                const onImgClick = () => {
-                    if (hasMany) show(idx + 1);
-                };
-                const onClose = () => cleanup();
+substitui tudo o que está entre <style> e </style> pelo trecho abaixo:
 
-                function cleanup() {
-                    viewer.close();
-                    document.removeEventListener("keydown", onKey);
-                    viewer.removeEventListener("click", onBackdrop);
-                    viewerImg.removeEventListener("click", onImgClick);
-                    btnClose.removeEventListener("click", onClose);
-                    if (hasMany) {
-                        btnPrev.removeEventListener("click", onPrev);
-                        btnNext.removeEventListener("click", onNext);
-                    }
-                }
+<style>
+    :root {
+        color-scheme: dark light;
+    }
+    body {
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 
-                // 6) Abre sem mexer no scroll (usa showModal + restaura scroll)
-                const y = window.scrollY || document.documentElement.scrollTop;
-                show(idx);
-                viewer.showModal();
-                requestAnimationFrame(() => window.scrollTo(0, y));
+    /* === VIEWER (Lightbox) === */
+    #viewer {
+        position: fixed;
+        inset: 0;
+        display: none; /* inicia oculto */
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.75);
+        border: none;
+        margin: 0;
+        padding: 0;
+        z-index: 9999;
+    }
+    #viewer[open] {
+        display: flex; /* só aparece quando aberto */
+    }
+    #viewerImg {
+        max-width: 90vw;
+        max-height: 90vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 1rem;
+        margin: auto;
+        display: block;
+    }
+    #viewer [data-nav] {
+        position: absolute;
+        z-index: 10;
+        border: 1px solid rgb(64 64 64);
+        background: rgba(24, 24, 24, 0.8);
+        border-radius: 9999px;
+        color: #fff;
+    }
+    #viewer [data-nav="prev"],
+    #viewer [data-nav="next"] {
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 0.5rem 0.75rem;
+    }
+    #viewer [data-nav="prev"] {
+        left: 0.75rem;
+    }
+    #viewer [data-nav="next"] {
+        right: 0.75rem;
+    }
+    #viewer [data-nav="close"] {
+        top: 0.75rem;
+        right: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+</style>
 
-                document.addEventListener("keydown", onKey);
-                viewer.addEventListener("click", onBackdrop);
-                viewerImg.addEventListener("click", onImgClick);
-                btnClose.addEventListener("click", onClose);
-                if (hasMany) {
-                    btnPrev.addEventListener("click", onPrev);
-                    btnNext.addEventListener("click", onNext);
-                }
-            }
+⚙️ Função openViewer() corrigida
+
+troque apenas essa função no seu <script>:
+
+function openViewer(p, startIndex = 0) {
+    const viewer = document.getElementById("viewer");
+    const viewerImg = document.getElementById("viewerImg");
+
+    if (!Array.isArray(p.imagens) || p.imagens.length === 0) return;
+
+    const hasMany = p.imagens.length > 1;
+    let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
+
+    // cria botões (setas + fechar)
+    let btnPrev = viewer.querySelector('[data-nav="prev"]');
+    let btnNext = viewer.querySelector('[data-nav="next"]');
+    let btnClose = viewer.querySelector('[data-nav="close"]');
+
+    if (!btnPrev) {
+        btnPrev = document.createElement("button");
+        btnPrev.dataset.nav = "prev";
+        btnPrev.textContent = "‹";
+        viewer.appendChild(btnPrev);
+    }
+    if (!btnNext) {
+        btnNext = document.createElement("button");
+        btnNext.dataset.nav = "next";
+        btnNext.textContent = "›";
+        viewer.appendChild(btnNext);
+    }
+    if (!btnClose) {
+        btnClose = document.createElement("button");
+        btnClose.dataset.nav = "close";
+        btnClose.textContent = "✕";
+        btnClose.title = "Fechar";
+        viewer.appendChild(btnClose);
+    }
+
+    // mostra/oculta setas
+    btnPrev.style.display = hasMany ? "" : "none";
+    btnNext.style.display = hasMany ? "" : "none";
+
+    const show = (i) => {
+        idx = (i + p.imagens.length) % p.imagens.length;
+        viewerImg.src = p.imagens[idx];
+    };
+
+    // eventos
+    const cleanup = () => {
+        viewer.removeAttribute("open");
+        document.removeEventListener("keydown", onKey);
+        viewer.removeEventListener("click", onBackdrop);
+        btnClose.removeEventListener("click", onClose);
+        viewerImg.removeEventListener("click", onImgClick);
+        if (hasMany) {
+            btnPrev.removeEventListener("click", onPrev);
+            btnNext.removeEventListener("click", onNext);
+        }
+    };
+    const onKey = (e) => {
+        if (e.key === "Escape") cleanup();
+        if (!hasMany) return;
+        if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
+        if (e.key === "ArrowLeft") show(idx - 1);
+    };
+    const onBackdrop = (e) => {
+        if (e.target === viewer) cleanup();
+    };
+    const onPrev = () => show(idx - 1);
+    const onNext = () => show(idx + 1);
+    const onImgClick = () => {
+        if (hasMany) show(idx + 1);
+    };
+    const onClose = () => cleanup();
+
+    show(idx);
+    viewer.setAttribute("open", ""); // abre sem rolar pro topo
+    document.addEventListener("keydown", onKey);
+    viewer.addEventListener("click", onBackdrop);
+    btnClose.addEventListener("click", onClose);
+    viewerImg.addEventListener("click", onImgClick);
+    if (hasMany) {
+        btnPrev.addEventListener("click", onPrev);
+        btnNext.addEventListener("click", onNext);
+    }
+}
 
             // ======= FILTRO/ORDENAÇÃO & RENDER =======
             function filterAndSort(list, state) {
