@@ -10,10 +10,21 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            :root { color-scheme: dark light; }
-            body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
-            .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-            dialog::backdrop { background: rgb(0 0 0 / 0.6); }
+            :root {
+                color-scheme: dark light;
+            }
+            body {
+                font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+            }
+            .line-clamp-2 {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            dialog::backdrop {
+                background: rgb(0 0 0 / 0.6);
+            }
         </style>
     </head>
     <body class="bg-neutral-950 text-neutral-100">
@@ -29,10 +40,19 @@
                     <a id="whatsHeader" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">
                         Falar no WhatsApp
                     </a>
-                    <button id="downloadCsvModel" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden" data-admin title="Baixar modelo CSV">
+                    <button
+                        id="downloadCsvModel"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden"
+                        data-admin
+                        title="Baixar modelo CSV"
+                    >
                         Modelo CSV
                     </button>
-                    <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin title="Importar CSV">
+                    <label
+                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden"
+                        data-admin
+                        title="Importar CSV"
+                    >
                         <input id="csvInput" type="file" accept=".csv" class="hidden" />
                         Importar CSV
                     </label>
@@ -103,7 +123,10 @@
                     <a id="whatsFooter" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">
                         Falar no WhatsApp
                     </a>
-                    <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin>
+                    <label
+                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden"
+                        data-admin
+                    >
                         <input id="csvInput2" type="file" accept=".csv" class="hidden" />
                         Importar CSV
                     </label>
@@ -665,66 +688,80 @@
             }
 
             // ======= VIEWER MULTIFOTOS =======
-            function openViewer(p, startIndex = 0){
-              const viewer = document.getElementById('viewer');
-              const viewerImg = document.getElementById('viewerImg');
-              if (!p.imagens || !p.imagens.length){
-                viewerImg.src = '';
+            function openViewer(p, startIndex = 0) {
+                const viewer = document.getElementById("viewer");
+                const viewerImg = document.getElementById("viewerImg");
+                const hasMany = Array.isArray(p.imagens) && p.imagens.length > 1;
+
+                if (!hasMany && (!p.imagens || !p.imagens.length)) {
+                    viewerImg.src = "";
+                    viewer.showModal();
+                    return;
+                }
+
+                let idx = Math.max(0, Math.min(startIndex, (p.imagens?.length || 1) - 1));
+                const show = (i) => {
+                    idx = (i + p.imagens.length) % p.imagens.length;
+                    viewerImg.src = p.imagens[idx];
+                };
+
+                // cria (uma vez) e só exibe se tiver mais de 1
+                let btnPrev = viewer.querySelector('[data-nav="prev"]');
+                let btnNext = viewer.querySelector('[data-nav="next"]');
+                if (!btnPrev) {
+                    btnPrev = document.createElement("button");
+                    btnPrev.dataset.nav = "prev";
+                    btnPrev.className = "absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
+                    btnPrev.textContent = "‹";
+                    viewer.appendChild(btnPrev);
+                }
+                if (!btnNext) {
+                    btnNext = document.createElement("button");
+                    btnNext.dataset.nav = "next";
+                    btnNext.className = "absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
+                    btnNext.textContent = "›";
+                    viewer.appendChild(btnNext);
+                }
+
+                // mostra/oculta setas conforme quantidade
+                btnPrev.style.display = hasMany ? "" : "none";
+                btnNext.style.display = hasMany ? "" : "none";
+
+                const onKey = (e) => {
+                    if (!hasMany) return;
+                    if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
+                    if (e.key === "ArrowLeft") show(idx - 1);
+                    if (e.key === "Escape") cleanup();
+                };
+                const onBackdrop = (e) => {
+                    if (e.target === viewer) cleanup();
+                };
+                const onPrev = () => show(idx - 1);
+                const onNext = () => show(idx + 1);
+                const onImgClick = () => {
+                    if (hasMany) show(idx + 1);
+                };
+
+                function cleanup() {
+                    viewer.close();
+                    document.removeEventListener("keydown", onKey);
+                    viewer.removeEventListener("click", onBackdrop);
+                    viewerImg.removeEventListener("click", onImgClick);
+                    if (hasMany) {
+                        btnPrev.removeEventListener("click", onPrev);
+                        btnNext.removeEventListener("click", onNext);
+                    }
+                }
+
+                show(idx);
                 viewer.showModal();
-                return;
-              }
-              let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
-
-              function show(i){
-                idx = (i + p.imagens.length) % p.imagens.length;
-                viewerImg.src = p.imagens[idx];
-              }
-
-              // cria botões de navegação se ainda não existem
-              let btnPrev = viewer.querySelector('[data-nav="prev"]');
-              let btnNext = viewer.querySelector('[data-nav="next"]');
-              if (!btnPrev){
-                btnPrev = document.createElement('button');
-                btnPrev.dataset.nav = 'prev';
-                btnPrev.className = 'absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2';
-                btnPrev.textContent = '‹';
-                viewer.appendChild(btnPrev);
-              }
-              if (!btnNext){
-                btnNext = document.createElement('button');
-                btnNext.dataset.nav = 'next';
-                btnNext.className = 'absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2';
-                btnNext.textContent = '›';
-                viewer.appendChild(btnNext);
-              }
-
-              // handlers
-              const onKey = (e)=>{
-                if (e.key === 'ArrowRight' || e.key === ' ') show(idx+1);
-                if (e.key === 'ArrowLeft') show(idx-1);
-                if (e.key === 'Escape') cleanup();
-              };
-              const onBackdrop = (e)=>{ if (e.target === viewer) cleanup(); };
-              const onPrev = ()=> show(idx-1);
-              const onNext = ()=> show(idx+1);
-              const onImgClick = ()=> show(idx+1);
-
-              function cleanup(){
-                viewer.close();
-                document.removeEventListener('keydown', onKey);
-                viewer.removeEventListener('click', onBackdrop);
-                btnPrev.removeEventListener('click', onPrev);
-                btnNext.removeEventListener('click', onNext);
-                viewerImg.removeEventListener('click', onImgClick);
-              }
-
-              show(idx);
-              viewer.showModal();
-              document.addEventListener('keydown', onKey);
-              viewer.addEventListener('click', onBackdrop);
-              btnPrev.addEventListener('click', onPrev);
-              btnNext.addEventListener('click', onNext);
-              viewerImg.addEventListener('click', onImgClick);
+                document.addEventListener("keydown", onKey);
+                viewer.addEventListener("click", onBackdrop);
+                viewerImg.addEventListener("click", onImgClick);
+                if (hasMany) {
+                    btnPrev.addEventListener("click", onPrev);
+                    btnNext.addEventListener("click", onNext);
+                }
             }
 
             // ======= FILTRO/ORDENAÇÃO & RENDER =======
@@ -739,10 +776,17 @@
                 if (state.status) r = r.filter((p) => (p.status || "") === state.status);
 
                 switch (state.sort) {
-                    case "price_asc": r.sort((a, b) => a.preco - b.preco); break;
-                    case "price_desc": r.sort((a, b) => b.preco - a.preco); break;
-                    case "alpha": r.sort((a, b) => a.titulo.localeCompare(b.titulo)); break;
-                    default: r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+                    case "price_asc":
+                        r.sort((a, b) => a.preco - b.preco);
+                        break;
+                    case "price_desc":
+                        r.sort((a, b) => b.preco - a.preco);
+                        break;
+                    case "alpha":
+                        r.sort((a, b) => a.titulo.localeCompare(b.titulo));
+                        break;
+                    default:
+                        r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
                 }
                 return r;
             }
@@ -819,13 +863,21 @@
 
                     const actions = el("div", "grid grid-cols-2 gap-2 pt-1");
                     const btnWa = el("a", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950 col-span-2", {
-                        href: "#", target: "_blank", rel: "noopener", "aria-label": "Falar no WhatsApp",
+                        href: "#",
+                        target: "_blank",
+                        rel: "noopener",
+                        "aria-label": "Falar no WhatsApp",
                     });
                     btnWa.textContent = "Falar no WhatsApp";
-                    btnWa.addEventListener("click", (e) => { e.preventDefault(); window.open(buildWaLink(p), "_blank"); });
+                    btnWa.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        window.open(buildWaLink(p), "_blank");
+                    });
 
                     const btnExt = el("a", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700", {
-                        href: p.linkExterno || "#", target: "_blank", rel: "noopener"
+                        href: p.linkExterno || "#",
+                        target: "_blank",
+                        rel: "noopener",
                     });
                     btnExt.textContent = "Ver anúncio";
                     if (!p.linkExterno) btnExt.classList.add("pointer-events-none", "opacity-50");
@@ -861,7 +913,9 @@
                 const blob = new Blob([rows.join("")], { type: "text/csv;charset=utf-8;" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
-                a.href = url; a.download = "modelo_produtos.csv"; a.click();
+                a.href = url;
+                a.download = "modelo_produtos.csv";
+                a.click();
                 URL.revokeObjectURL(url);
             }
 
@@ -869,7 +923,10 @@
                 const lines = text.split(/\r?\n/).filter(Boolean);
                 if (!lines.length) return [];
                 const delim = detectDelimiter(lines[0]);
-                const header = lines.shift().split(delim).map((h) => h.trim());
+                const header = lines
+                    .shift()
+                    .split(delim)
+                    .map((h) => h.trim());
                 const idx = (name) => header.indexOf(name);
                 return lines.map((l) => {
                     const c = l.split(delim).map((v) => v.trim());
@@ -925,7 +982,9 @@
                         render(filterAndSort(produtos, st));
                         console.info(`Carregado produtos.csv (${items.length} itens).`);
                     }
-                } catch (e) { console.info("Sem produtos.csv"); }
+                } catch (e) {
+                    console.info("Sem produtos.csv");
+                }
             }
 
             // ======= INIT =======
@@ -952,7 +1011,8 @@
 
             function setAdminMode(on) {
                 document.querySelectorAll("[data-admin]").forEach((el) => el.classList.toggle("hidden", !on));
-                if (on) localStorage.setItem("admin", "1"); else localStorage.removeItem("admin");
+                if (on) localStorage.setItem("admin", "1");
+                else localStorage.removeItem("admin");
             }
             setAdminMode(ADMIN);
 
@@ -960,9 +1020,15 @@
                 const btnModel = document.getElementById("downloadCsvModel");
                 if (btnModel) btnModel.addEventListener("click", downloadCsvModel);
                 const inp1 = document.getElementById("csvInput");
-                if (inp1) inp1.addEventListener("change", (e) => { if (e.target.files[0]) handleCsvFile(e.target.files[0]); });
+                if (inp1)
+                    inp1.addEventListener("change", (e) => {
+                        if (e.target.files[0]) handleCsvFile(e.target.files[0]);
+                    });
                 const inp2 = document.getElementById("csvInput2");
-                if (inp2) inp2.addEventListener("change", (e) => { if (e.target.files[0]) handleCsvFile(e.target.files[0]); });
+                if (inp2)
+                    inp2.addEventListener("change", (e) => {
+                        if (e.target.files[0]) handleCsvFile(e.target.files[0]);
+                    });
             }
 
             window.addEventListener("keydown", (e) => {
