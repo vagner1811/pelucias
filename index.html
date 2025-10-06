@@ -719,6 +719,10 @@
             function openViewer(p, startIndex = 0) {
             const viewer = document.getElementById("viewer");
             const viewerImg = document.getElementById("viewerImg");
+
+            // impede o scroll reset da página ao abrir o dialog
+            const scrollPos = window.scrollY || document.documentElement.scrollTop;
+                
             viewer.style.overflow = "hidden"; // evita scroll
             viewer.style.display = "flex";
             viewer.style.alignItems = "center";
@@ -730,6 +734,8 @@
             if (!p.imagens || !p.imagens.length) {
                 viewerImg.src = "";
                 viewer.showModal();
+                // restaura posição do scroll
+                window.scrollTo({ top: scrollPos, behavior: "instant" });
                 return;
             }
         
