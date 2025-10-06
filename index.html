@@ -52,6 +52,26 @@
             #viewer [data-nav] {
                 pointer-events: auto;
             }
+            #viewer {
+                  position: fixed;           /* 👈 garante que o dialog fica fixo na tela atual */
+                  inset: 0;                  /* cobre toda a viewport */
+                  margin: auto;              /* centraliza */
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  padding: 0;
+                  border: none;
+                  background: rgba(0,0,0,0.6);
+                  max-width: none;
+                  max-height: none;
+                }
+                
+                #viewerImg {
+                  max-width: 90vw;
+                  max-height: 90vh;
+                  object-fit: contain;
+                  border-radius: 1rem;
+                }
         </style>
     </head>
     <body class="bg-neutral-950 text-neutral-100">
@@ -734,7 +754,7 @@
                 const hasMany = Array.isArray(p.imagens) && p.imagens.length > 1;
                 if (!p.imagens || !p.imagens.length) {
                     viewerImg.src = "";
-                    viewer.showModal();
+                    viewer.show();
                     // restaura scroll depois do showModal
                     requestAnimationFrame(() => {
                         window.scrollTo(0, savedScroll);
@@ -807,7 +827,7 @@
                 }
 
                 show(idx);
-                viewer.showModal();
+                viewer.show();
 
                 // restaura a rolagem DEPOIS que o browser reposiciona o foco
                 requestAnimationFrame(() => {
