@@ -846,8 +846,8 @@
                 list.forEach((p) => {
                     const card = el("article", "group rounded-2xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 transition overflow-hidden");
 
-                    const imgWrap = el("div", "relative aspect-[4/3] bg-neutral-800 overflow-hidden");
-                    const img = el("img", "h-full w-full object-cover");
+                    const imgWrap = el("div", "relative aspect-[4/3] bg-neutral-900/60 overflow-hidden");
+                    const img = el("img", "h-full w-full object-contain p-1 bg-neutral-900");
                     img.src = p.imagens && p.imagens[0] ? p.imagens[0] : "";
                     img.alt = p.titulo || "Produto";
                     img.loading = "lazy";
