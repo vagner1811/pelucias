@@ -858,8 +858,7 @@
             function downloadCsvModel() {
                 const rows = [CSV_HEADERS.join(",")];
                 rows.push("stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,");
-                const blob = new Blob([rows.join("
-")], { type: "text/csv;charset=utf-8;" });
+                const blob = new Blob([rows.join("")], { type: "text/csv;charset=utf-8;" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url; a.download = "modelo_produtos.csv"; a.click();
@@ -867,9 +866,7 @@
             }
 
             function parseCsv(text) {
-                const lines = text.split(/
-?
-/).filter(Boolean);
+                const lines = text.split(/\r?\n/).filter(Boolean);
                 if (!lines.length) return [];
                 const delim = detectDelimiter(lines[0]);
                 const header = lines.shift().split(delim).map((h) => h.trim());
