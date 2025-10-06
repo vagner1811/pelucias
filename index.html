@@ -10,24 +10,22 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            :root {
-                color-scheme: dark light;
-            }
-            body {
-                font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-            }
+            :root { color-scheme: dark light; }
+            body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
             .line-clamp-2 {
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
             }
-        
-            /* === VIEWER (Lightbox) === */
+
+            /* === VIEWER (Lightbox) ===
+               Usamos <dialog> sem showModal() pra não mexer no scroll.
+               Exibimos via atributo [open] e CSS fixo cobrindo a viewport. */
             #viewer {
                 position: fixed;
                 inset: 0;
-                display: none; /* inicia oculto */
+                display: none;            /* inicia oculto */
                 align-items: center;
                 justify-content: center;
                 background: rgba(0, 0, 0, 0.75);
@@ -36,9 +34,8 @@
                 padding: 0;
                 z-index: 9999;
             }
-            #viewer[open] {
-                display: flex; /* só aparece quando aberto */
-            }
+            #viewer[open] { display: flex; } /* aparece quando aberto */
+
             #viewerImg {
                 max-width: 90vw;
                 max-height: 90vh;
@@ -46,30 +43,32 @@
                 height: auto;
                 object-fit: contain;
                 border-radius: 1rem;
-                margin: auto;
+                margin: auto;             /* centraliza sempre */
                 display: block;
             }
-            #viewer [data-nav] {
+
+            /* Botões de navegação / fechar */
+            #viewer [data-nav]{
                 position: absolute;
                 z-index: 10;
                 border: 1px solid rgb(64 64 64);
                 background: rgba(24, 24, 24, 0.8);
                 border-radius: 9999px;
                 color: #fff;
+                font-size: 1rem;
+                line-height: 1;
+                cursor: pointer;
+                user-select: none;
             }
             #viewer [data-nav="prev"],
-            #viewer [data-nav="next"] {
+            #viewer [data-nav="next"]{
                 top: 50%;
                 transform: translateY(-50%);
                 padding: 0.5rem 0.75rem;
             }
-            #viewer [data-nav="prev"] {
-                left: 0.75rem;
-            }
-            #viewer [data-nav="next"] {
-                right: 0.75rem;
-            }
-            #viewer [data-nav="close"] {
+            #viewer [data-nav="prev"]{ left: 0.75rem; }
+            #viewer [data-nav="next"]{ right: 0.75rem; }
+            #viewer [data-nav="close"]{
                 top: 0.75rem;
                 right: 0.75rem;
                 padding: 0.25rem 0.5rem;
@@ -702,6 +701,7 @@
                     linkExterno: "",
                 },
             ];
+
             // ======= UTIL =======
             const fmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -736,202 +736,131 @@
                 location.hash = sp.toString();
             }
 
-            // ======= VIEWER MULTIFOTOS =======
-O ChatGPT disse:
+            // ======= VIEWER MULTIFOTOS (abre onde está + trava scroll do body) =======
+            function openViewer(p, startIndex = 0) {
+                const viewer = document.getElementById("viewer");
+                const viewerImg = document.getElementById("viewerImg");
 
-perfeito — entendi o que aconteceu.
-o comportamento que você quer é:
+                if (!Array.isArray(p.imagens) || p.imagens.length === 0) return;
 
-✅ o modal abrir onde o usuário está (sem rolar pro topo)
+                const hasMany = p.imagens.length > 1;
+                let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
 
-✅ a imagem abrir centralizada e proporcional (sem cortar, nem desalinhada)
+                // cria botões uma vez
+                let btnPrev = viewer.querySelector('[data-nav="prev"]');
+                let btnNext = viewer.querySelector('[data-nav="next"]');
+                let btnClose = viewer.querySelector('[data-nav="close"]');
 
-✅ o fundo escurecido como antes
+                if (!btnPrev) {
+                    btnPrev = document.createElement("button");
+                    btnPrev.dataset.nav = "prev";
+                    btnPrev.textContent = "‹";
+                    viewer.appendChild(btnPrev);
+                }
+                if (!btnNext) {
+                    btnNext = document.createElement("button");
+                    btnNext.dataset.nav = "next";
+                    btnNext.textContent = "›";
+                    viewer.appendChild(btnNext);
+                }
+                if (!btnClose) {
+                    btnClose = document.createElement("button");
+                    btnClose.dataset.nav = "close";
+                    btnClose.textContent = "✕";
+                    btnClose.title = "Fechar";
+                    viewer.appendChild(btnClose);
+                }
 
-pra isso, o segredo é não usar showModal() (porque ele força o foco e o scroll pro topo) e usar show() — mas junto com CSS fixo pra cobrir a tela.
-abaixo está o trecho corrigido da função openViewer() e o CSS ajustado pra centralizar corretamente:
+                // mostra/oculta setas
+                btnPrev.style.display = hasMany ? "" : "none";
+                btnNext.style.display = hasMany ? "" : "none";
 
-🧩 CSS final do viewer
+                const show = (i) => {
+                    idx = (i + p.imagens.length) % p.imagens.length;
+                    viewerImg.src = p.imagens[idx];
+                };
 
-substitui tudo o que está entre <style> e </style> pelo trecho abaixo:
+                // ===== scroll lock no body =====
+                const prevScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+                const lockBodyScroll = () => {
+                    document.body.style.position = "fixed";
+                    document.body.style.top = `-${prevScrollY}px`;
+                    document.body.style.left = "0";
+                    document.body.style.right = "0";
+                    document.body.style.width = "100%";
+                    document.body.style.overflow = "hidden";
+                };
+                const unlockBodyScroll = () => {
+                    const y = Math.abs(parseInt(document.body.style.top || "0", 10)) || 0;
+                    document.body.style.position = "";
+                    document.body.style.top = "";
+                    document.body.style.left = "";
+                    document.body.style.right = "";
+                    document.body.style.width = "";
+                    document.body.style.overflow = "";
+                    window.scrollTo(0, y);
+                };
 
-<style>
-    :root {
-        color-scheme: dark light;
-    }
-    body {
-        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
-    }
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+                const cleanup = () => {
+                    viewer.removeAttribute("open");       // fecha sem alterar scroll
+                    document.removeEventListener("keydown", onKey);
+                    viewer.removeEventListener("click", onBackdrop);
+                    viewerImg.removeEventListener("click", onImgClick);
+                    btnClose.removeEventListener("click", onClose);
+                    if (hasMany) {
+                        btnPrev.removeEventListener("click", onPrev);
+                        btnNext.removeEventListener("click", onNext);
+                    }
+                    unlockBodyScroll();
+                };
 
-    /* === VIEWER (Lightbox) === */
-    #viewer {
-        position: fixed;
-        inset: 0;
-        display: none; /* inicia oculto */
-        align-items: center;
-        justify-content: center;
-        background: rgba(0, 0, 0, 0.75);
-        border: none;
-        margin: 0;
-        padding: 0;
-        z-index: 9999;
-    }
-    #viewer[open] {
-        display: flex; /* só aparece quando aberto */
-    }
-    #viewerImg {
-        max-width: 90vw;
-        max-height: 90vh;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-        border-radius: 1rem;
-        margin: auto;
-        display: block;
-    }
-    #viewer [data-nav] {
-        position: absolute;
-        z-index: 10;
-        border: 1px solid rgb(64 64 64);
-        background: rgba(24, 24, 24, 0.8);
-        border-radius: 9999px;
-        color: #fff;
-    }
-    #viewer [data-nav="prev"],
-    #viewer [data-nav="next"] {
-        top: 50%;
-        transform: translateY(-50%);
-        padding: 0.5rem 0.75rem;
-    }
-    #viewer [data-nav="prev"] {
-        left: 0.75rem;
-    }
-    #viewer [data-nav="next"] {
-        right: 0.75rem;
-    }
-    #viewer [data-nav="close"] {
-        top: 0.75rem;
-        right: 0.75rem;
-        padding: 0.25rem 0.5rem;
-    }
-</style>
+                const onKey = (e) => {
+                    if (e.key === "Escape") return cleanup();
+                    if (!hasMany) return;
+                    if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
+                    if (e.key === "ArrowLeft") show(idx - 1);
+                };
+                const onBackdrop = (e) => { if (e.target === viewer) cleanup(); };
+                const onPrev = () => show(idx - 1);
+                const onNext = () => show(idx + 1);
+                const onImgClick = () => { if (hasMany) show(idx + 1); };
+                const onClose = () => cleanup();
 
-⚙️ Função openViewer() corrigida
+                show(idx);
+                viewer.setAttribute("open", "");   // usa [open] em vez de showModal()
+                lockBodyScroll();
 
-troque apenas essa função no seu <script>:
-
-function openViewer(p, startIndex = 0) {
-    const viewer = document.getElementById("viewer");
-    const viewerImg = document.getElementById("viewerImg");
-
-    if (!Array.isArray(p.imagens) || p.imagens.length === 0) return;
-
-    const hasMany = p.imagens.length > 1;
-    let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
-
-    // cria botões (setas + fechar)
-    let btnPrev = viewer.querySelector('[data-nav="prev"]');
-    let btnNext = viewer.querySelector('[data-nav="next"]');
-    let btnClose = viewer.querySelector('[data-nav="close"]');
-
-    if (!btnPrev) {
-        btnPrev = document.createElement("button");
-        btnPrev.dataset.nav = "prev";
-        btnPrev.textContent = "‹";
-        viewer.appendChild(btnPrev);
-    }
-    if (!btnNext) {
-        btnNext = document.createElement("button");
-        btnNext.dataset.nav = "next";
-        btnNext.textContent = "›";
-        viewer.appendChild(btnNext);
-    }
-    if (!btnClose) {
-        btnClose = document.createElement("button");
-        btnClose.dataset.nav = "close";
-        btnClose.textContent = "✕";
-        btnClose.title = "Fechar";
-        viewer.appendChild(btnClose);
-    }
-
-    // mostra/oculta setas
-    btnPrev.style.display = hasMany ? "" : "none";
-    btnNext.style.display = hasMany ? "" : "none";
-
-    const show = (i) => {
-        idx = (i + p.imagens.length) % p.imagens.length;
-        viewerImg.src = p.imagens[idx];
-    };
-
-    // eventos
-    const cleanup = () => {
-        viewer.removeAttribute("open");
-        document.removeEventListener("keydown", onKey);
-        viewer.removeEventListener("click", onBackdrop);
-        btnClose.removeEventListener("click", onClose);
-        viewerImg.removeEventListener("click", onImgClick);
-        if (hasMany) {
-            btnPrev.removeEventListener("click", onPrev);
-            btnNext.removeEventListener("click", onNext);
-        }
-    };
-    const onKey = (e) => {
-        if (e.key === "Escape") cleanup();
-        if (!hasMany) return;
-        if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
-        if (e.key === "ArrowLeft") show(idx - 1);
-    };
-    const onBackdrop = (e) => {
-        if (e.target === viewer) cleanup();
-    };
-    const onPrev = () => show(idx - 1);
-    const onNext = () => show(idx + 1);
-    const onImgClick = () => {
-        if (hasMany) show(idx + 1);
-    };
-    const onClose = () => cleanup();
-
-    show(idx);
-    viewer.setAttribute("open", ""); // abre sem rolar pro topo
-    document.addEventListener("keydown", onKey);
-    viewer.addEventListener("click", onBackdrop);
-    btnClose.addEventListener("click", onClose);
-    viewerImg.addEventListener("click", onImgClick);
-    if (hasMany) {
-        btnPrev.addEventListener("click", onPrev);
-        btnNext.addEventListener("click", onNext);
-    }
-}
+                document.addEventListener("keydown", onKey);
+                viewer.addEventListener("click", onBackdrop);
+                viewerImg.addEventListener("click", onImgClick);
+                btnClose.addEventListener("click", onClose);
+                if (hasMany) {
+                    btnPrev.addEventListener("click", onPrev);
+                    btnNext.addEventListener("click", onNext);
+                }
+            }
 
             // ======= FILTRO/ORDENAÇÃO & RENDER =======
             function filterAndSort(list, state) {
                 let r = [...list];
                 if (state.q) {
                     const ql = state.q.toLowerCase();
-                    r = r.filter((p) => (p.titulo || "").toLowerCase().includes(ql) || (p.tags || []).join(" ").toLowerCase().includes(ql) || (p.especie || "").toLowerCase().includes(ql) || (p.expressao || "").toLowerCase().includes(ql));
+                    r = r.filter((p) =>
+                        (p.titulo || "").toLowerCase().includes(ql) ||
+                        (p.tags || []).join(" ").toLowerCase().includes(ql) ||
+                        (p.especie || "").toLowerCase().includes(ql) ||
+                        (p.expressao || "").toLowerCase().includes(ql)
+                    );
                 }
                 if (state.cat) r = r.filter((p) => p.categoria === state.cat);
                 if (state.cond) r = r.filter((p) => p.condicao === state.cond);
                 if (state.status) r = r.filter((p) => (p.status || "") === state.status);
 
                 switch (state.sort) {
-                    case "price_asc":
-                        r.sort((a, b) => a.preco - b.preco);
-                        break;
-                    case "price_desc":
-                        r.sort((a, b) => b.preco - a.preco);
-                        break;
-                    case "alpha":
-                        r.sort((a, b) => a.titulo.localeCompare(b.titulo));
-                        break;
-                    default:
-                        r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+                    case "price_asc": r.sort((a, b) => a.preco - b.preco); break;
+                    case "price_desc": r.sort((a, b) => b.preco - a.preco); break;
+                    case "alpha": r.sort((a, b) => a.titulo.localeCompare(b.titulo)); break;
+                    default: r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
                 }
                 return r;
             }
@@ -981,7 +910,7 @@ function openViewer(p, startIndex = 0) {
                         imgWrap.appendChild(b3);
                     }
 
-                    // abrir viewer (multi-fotos)
+                    // abrir viewer
                     imgWrap.addEventListener("click", () => openViewer(p, 0));
 
                     const content = el("div", "p-4 space-y-2");
@@ -990,7 +919,7 @@ function openViewer(p, startIndex = 0) {
 
                     const meta = el("p", "text-sm text-neutral-400");
                     const bits = [p.especie, p.expressao, p.tamanho].filter(Boolean).join(" • ");
-                    meta.textContent = bits || " ";
+                    meta.textContent = bits || " ";
 
                     const priceRow = el("div", "flex items-center justify-between gap-2");
                     const price = el("div", "text-lg font-bold");
