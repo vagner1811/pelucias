@@ -1,840 +1,1056 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vitrine de Pelúcias</title>
-  <meta name="description" content="Catálogo de pelúcias originais à venda – Feisty Pets, Disney e mais. Fale no WhatsApp para comprar." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root { color-scheme: dark light; }
-    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
-    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    dialog::backdrop { background: rgb(0 0 0 / .6); }
-    /* Observação: @apply não é suportado no CDN do Tailwind; se quiser estilos sólidos sem build, aplique classes nos elementos.
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Vitrine de Pelúcias</title>
+        <meta name="description" content="Catálogo de pelúcias originais à venda – Feisty Pets, Disney e mais. Fale no WhatsApp para comprar." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            :root {
+                color-scheme: dark light;
+            }
+            body {
+                font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+            }
+            .line-clamp-2 {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            dialog::backdrop {
+                background: rgb(0 0 0 / 0.6);
+            }
+            /* Observação: @apply não é suportado no CDN do Tailwind; se quiser estilos sólidos sem build, aplique classes nos elementos.
        Mantive as utilitárias aqui apenas como referência; não quebram o funcionamento. */
-    .btn { /* @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition; */ }
-    .btn-primary { /* @apply bg-emerald-500 hover:bg-emerald-400 text-emerald-950; */ }
-    .btn-neutral { /* @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700; */ }
-    .badge { /* @apply rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs; */ }
-  </style>
-</head>
-<body class="bg-neutral-950 text-neutral-100">
-  <!-- Header -->
-  <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/70 border-b border-neutral-800">
-    <div class="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
-      <div class="size-9 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500"></div>
-      <div class="flex-1">
-        <h1 class="text-lg sm:text-2xl font-bold">Vitrine de Pelúcias</h1>
-        <p class="text-sm text-neutral-400">Feisty Pets, Disney e mais — estoque próprio</p>
-      </div>
-      <div class="hidden sm:flex items-center gap-2">
-        <a id="whatsHeader" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">Falar no WhatsApp</a>
-        <button id="downloadCsvModel" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden" data-admin title="Baixar modelo CSV">Modelo CSV</button>
-        <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin title="Importar CSV">
-          <input id="csvInput" type="file" accept=".csv" class="hidden" />
-          Importar CSV
-        </label>
-      </div>
-    </div>
-  </header>
+            .btn {
+                /* @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition; */
+            }
+            .btn-primary {
+                /* @apply bg-emerald-500 hover:bg-emerald-400 text-emerald-950; */
+            }
+            .btn-neutral {
+                /* @apply bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700; */
+            }
+            .badge {
+                /* @apply rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs; */
+            }
+        </style>
+    </head>
+    <body class="bg-neutral-950 text-neutral-100">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/70 border-b border-neutral-800">
+            <div class="mx-auto max-w-7xl px-4 py-3 flex items-center gap-3">
+                <div class="size-9 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500"></div>
+                <div class="flex-1">
+                    <h1 class="text-lg sm:text-2xl font-bold">Vitrine de Pelúcias</h1>
+                    <p class="text-sm text-neutral-400">Feisty Pets, Disney e mais — estoque próprio</p>
+                </div>
+                <div class="hidden sm:flex items-center gap-2">
+                    <a id="whatsHeader" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">
+                        Falar no WhatsApp
+                    </a>
+                    <button
+                        id="downloadCsvModel"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 hidden"
+                        data-admin
+                        title="Baixar modelo CSV"
+                    >
+                        Modelo CSV
+                    </button>
+                    <label
+                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden"
+                        data-admin
+                        title="Importar CSV"
+                    >
+                        <input id="csvInput" type="file" accept=".csv" class="hidden" />
+                        Importar CSV
+                    </label>
+                </div>
+            </div>
+        </header>
 
-  <!-- Controls -->
-  <section class="mx-auto max-w-7xl px-4 py-5">
-    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-      <label class="block lg:col-span-2">
-        <span class="text-xs text-neutral-400">Buscar</span>
-        <input id="q" type="search" placeholder="Ex.: feisty, ursinho, disney…" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500" />
-      </label>
-      <label class="block">
-        <span class="text-xs text-neutral-400">Categoria</span>
-        <select id="cat" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-          <option value="">Todas</option>
-          <option>Feisty Pets</option>
-          <option>Disney</option>
-          <option>Outras</option>
-        </select>
-      </label>
-      <label class="block">
-        <span class="text-xs text-neutral-400">Condição</span>
-        <select id="cond" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-          <option value="">Todas</option>
-          <option>Novo</option>
-          <option>Usado</option>
-        </select>
-      </label>
-      <label class="block">
-        <span class="text-xs text-neutral-400">Status</span>
-        <select id="status" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-          <option value="">Todos</option>
-          <option>Disponível</option>
-          <option>Vendido</option>
-          <option>Reservado</option>
-        </select>
-      </label>
-      <label class="block">
-        <span class="text-xs text-neutral-400">Ordenar por</span>
-        <select id="sort" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
-          <option value="recent">Mais recentes</option>
-          <option value="price_asc">Menor preço</option>
-          <option value="price_desc">Maior preço</option>
-          <option value="alpha">A–Z</option>
-        </select>
-      </label>
-    </div>
-    <p class="mt-2 text-xs text-neutral-500 hidden" data-admin>Dica: para usar suas fotos sem pagar hospedagem, coloque-as numa pasta <code>/images</code> do projeto e referencie por nome do arquivo no CSV (ex.: <code>stitch1.jpg|stitch2.jpg</code>).</p>
-  </section>
+        <!-- Controls -->
+        <section class="mx-auto max-w-7xl px-4 py-5">
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+                <label class="block lg:col-span-2">
+                    <span class="text-xs text-neutral-400">Buscar</span>
+                    <input id="q" type="search" placeholder="Ex.: feisty, ursinho, disney…" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500" />
+                </label>
+                <label class="block">
+                    <span class="text-xs text-neutral-400">Categoria</span>
+                    <select id="cat" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todas</option>
+                        <option>Feisty Pets</option>
+                        <option>Disney</option>
+                        <option>Outras</option>
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-xs text-neutral-400">Condição</span>
+                    <select id="cond" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todas</option>
+                        <option>Novo</option>
+                        <option>Usado</option>
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-xs text-neutral-400">Status</span>
+                    <select id="status" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos</option>
+                        <option>Disponível</option>
+                        <option>Vendido</option>
+                        <option>Reservado</option>
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-xs text-neutral-400">Ordenar por</span>
+                    <select id="sort" class="mt-1 w-full rounded-2xl bg-neutral-900 border border-neutral-800 px-4 py-2.5 focus:ring-2 focus:ring-blue-500">
+                        <option value="recent">Mais recentes</option>
+                        <option value="price_asc">Menor preço</option>
+                        <option value="price_desc">Maior preço</option>
+                        <option value="alpha">A–Z</option>
+                    </select>
+                </label>
+            </div>
+            <p class="mt-2 text-xs text-neutral-500 hidden" data-admin>
+                Dica: para usar suas fotos sem pagar hospedagem, coloque-as numa pasta <code>/images</code> do projeto e referencie por nome do arquivo no CSV (ex.: <code>stitch1.jpg|stitch2.jpg</code>).
+            </p>
+        </section>
 
-  <!-- Grid -->
-  <main class="mx-auto max-w-7xl px-4 pb-24" id="grid" aria-live="polite"></main>
+        <!-- Grid -->
+        <main class="mx-auto max-w-7xl px-4 pb-24" id="grid" aria-live="polite"></main>
 
-  <!-- Footer -->
-  <footer class="border-t border-neutral-800">
-    <div class="mx-auto max-w-7xl px-4 py-10 grid sm:grid-cols-2 gap-6 items-center">
-      <div>
-        <h2 class="text-lg font-semibold">Quer comprar?</h2>
-        <p class="text-neutral-400">Clique em qualquer anúncio para falar no WhatsApp. Envio para todo o Brasil.</p>
-        <p class="text-neutral-500 text-sm mt-1">Frete: informe "frete a combinar" ou "retirar em mãos" no CSV para aparecer como etiqueta.</p>
-      </div>
-      <div class="flex sm:justify-end gap-2">
-        <a id="whatsFooter" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">Falar no WhatsApp</a>
-        <label class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden" data-admin>
-          <input id="csvInput2" type="file" accept=".csv" class="hidden" />
-          Importar CSV
-        </label>
-      </div>
-    </div>
-  </footer>
+        <!-- Footer -->
+        <footer class="border-t border-neutral-800">
+            <div class="mx-auto max-w-7xl px-4 py-10 grid sm:grid-cols-2 gap-6 items-center">
+                <div>
+                    <h2 class="text-lg font-semibold">Quer comprar?</h2>
+                    <p class="text-neutral-400">Clique em qualquer anúncio para falar no WhatsApp. Envio para todo o Brasil.</p>
+                    <p class="text-neutral-500 text-sm mt-1">Frete: informe "frete a combinar" ou "retirar em mãos" no CSV para aparecer como etiqueta.</p>
+                </div>
+                <div class="flex sm:justify-end gap-2">
+                    <a id="whatsFooter" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950">
+                        Falar no WhatsApp
+                    </a>
+                    <label
+                        class="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700 cursor-pointer hidden"
+                        data-admin
+                    >
+                        <input id="csvInput2" type="file" accept=".csv" class="hidden" />
+                        Importar CSV
+                    </label>
+                </div>
+            </div>
+        </footer>
 
-  <!-- Lightbox Dialog -->
-  <dialog id="viewer" class="rounded-2xl p-0 max-w-4xl w-[90vw] bg-neutral-950 border border-neutral-800">
-    <img id="viewerImg" alt="Pré-visualização" class="w-full h-auto rounded-2xl" />
-  </dialog>
+        <!-- Lightbox Dialog -->
+        <dialog id="viewer" class="rounded-2xl p-0 max-w-4xl w-[90vw] bg-neutral-950 border border-neutral-800">
+            <img id="viewerImg" alt="Pré-visualização" class="w-full h-auto rounded-2xl" />
+        </dialog>
 
-  <script>
-    // ======= CONFIGURAÇÕES RÁPIDAS =======
-    // Ative o modo admin com #admin na URL (ex.: .../pelucias/#admin)
-    // ou com ?admin=1. O estado fica salvo em localStorage até você desativar.
-    const ADMIN = location.hash.includes('admin') || new URLSearchParams(location.search).get('admin')==='1' || localStorage.getItem('admin')==='1';
+        <script>
+            // ======= CONFIGURAÇÕES RÁPIDAS =======
+            // Ative o modo admin com #admin na URL (ex.: .../pelucias/#admin)
+            // ou com ?admin=1. O estado fica salvo em localStorage até você desativar.
+            const ADMIN = location.hash.includes("admin") || new URLSearchParams(location.search).get("admin") === "1" || localStorage.getItem("admin") === "1";
 
-    const WHATS_NUMBER = "5511961580296"; // Ex.: 5511961580296 (sem + e sem espaços)
-    const STORE_CITY = "São Paulo, SP";
+            const WHATS_NUMBER = "5511961580296"; // Ex.: 5511961580296 (sem + e sem espaços)
+            const STORE_CITY = "São Paulo, SP";
 
-    // ======= DADOS DE PRODUTO (exemplos) =======
-    /**
-     * Campos suportados (CSV e JS):
-     * id, titulo, categoria, condicao, preco, moeda, tags (separadas por |),
-     * especie, expressao, tamanho, peso, estado, imagens (nomes separados por |),
-     * criadoEm (AAAA-MM-DD), descricao, status (Disponível/Vendido/Reservado),
-     * frete (ex.: "frete a combinar"), retirada (ex.: "retirar em mãos"),
-     * linkExterno (Shopee/OLX/etc)
-     */
-    let produtos = [
-      {
-        id: "digimons",
-        titulo: "Coleção Digimons",
-        categoria: "Outras",
-        condicao: "Novo",
-        preco: 160.00,
-        moeda: "BRL",
-        tags: ["colecionador"],
-        especie: "Varios",
-        expressao: "Sorriso",
-        tamanho: "aprox. 20–30 cm",
-        estado: "Novo sem marcas",
-        imagens: ["images/digimons.jpg"],
-        criadoEm: "2025-09-25",
-        descricao: "Para colecionadores.",
-        status: "Disponível",
-        frete: "frete a combinar",
-        retirada: "retirar em mãos",
-        linkExterno: ""
-      },
-      {
-    id: "bella-bocuda-coelha-rosa",
-    titulo: "Bella Bocuda – Coelha Rosa (2 fotos)",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["coelha","rosa"],
-    especie: "Coelho", tamanho: "", estado: "",
-    imagens: [
-      "images/BELLA_BOCUDA_COELHA_ROSA_1.jpg",
-      "images/BELLA_BOCUDA_COELHA_ROSA_2.jpg",
-    ],
-    criadoEm: "2025-10-05",
-    descricao: "Coelha rosa estilo feisty.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+            // ======= DADOS DE PRODUTO (exemplos) =======
+            /**
+             * Campos suportados (CSV e JS):
+             * id, titulo, categoria, condicao, preco, moeda, tags (separadas por |),
+             * especie, expressao, tamanho, peso, estado, imagens (nomes separados por |),
+             * criadoEm (AAAA-MM-DD), descricao, status (Disponível/Vendido/Reservado),
+             * frete (ex.: "frete a combinar"), retirada (ex.: "retirar em mãos"),
+             * linkExterno (Shopee/OLX/etc)
+             */
+            let produtos = [
+                {
+                    id: "digimons",
+                    titulo: "Coleção Digimons",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 160.0,
+                    moeda: "BRL",
+                    tags: ["colecionador"],
+                    especie: "Varios",
+                    expressao: "Sorriso",
+                    tamanho: "aprox. 20–30 cm",
+                    estado: "Novo sem marcas",
+                    imagens: ["images/digimons.jpg"],
+                    criadoEm: "2025-09-25",
+                    descricao: "Para colecionadores.",
+                    status: "Disponível",
+                    frete: "frete a combinar",
+                    retirada: "retirar em mãos",
+                    linkExterno: "",
+                },
+                {
+                    id: "bella-bocuda-coelha-rosa",
+                    titulo: "Bella Bocuda – Coelha Rosa (2 fotos)",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 650.0,
+                    moeda: "BRL",
+                    tags: ["coelha", "rosa"],
+                    especie: "Coelho",
+                    tamanho: "",
+                    estado: "",
+                    imagens: ["images/BELLA_BOCUDA_COELHA_ROSA_1.jpg", "images/BELLA_BOCUDA_COELHA_ROSA_2.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Coelha rosa estilo feisty.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  // Disney / Pixar / DreamWorks
-  {
-    id: "stitch-lote",
-    titulo: "Stitch – Lote (2 fotos)",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["stitch","lote","disney"],
-    especie: "Alien", tamanho: "", estado: "",
-    imagens: ["images/STITCH_LOTE.jpg","images/STITCH_LOTE_2.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Lote de pelúcias do Stitch.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "stitch-azul",
-    titulo: "Stitch Azul",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["stitch"],
-    especie: "Alien", tamanho: "", estado: "",
-    imagens: ["images/STITCH_AZUL.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Stitch clássico azul.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "stitch-sorvetinho",
-    titulo: "Stitch – Sorvetinho",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["stitch","edição"],
-    especie: "Alien",
-    imagens: ["images/STITCH_SORVETINHO.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Stitch com sorvete.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "stitch-suspensorio",
-    titulo: "Stitch – Suspensório",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["stitch"],
-    especie: "Alien",
-    imagens: ["images/STITCH_SUSPENSORIO.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Stitch com suspensório.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                // Disney / Pixar / DreamWorks
+                {
+                    id: "stitch-lote-gigante",
+                    titulo: "Stitch – Lote Gigantes",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 1400.0,
+                    moeda: "BRL",
+                    tags: ["stitch", "lote", "disney"],
+                    especie: "Alien",
+                    tamanho: "",
+                    estado: "",
+                    imagens: ["images/STITCH_LOTE.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Lote de pelúcias do Stitch.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "stitch-lote-pequeno",
+                    titulo: "Stitch – Lote Pequenos",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 150.0,
+                    moeda: "BRL",
+                    tags: ["stitch", "lote", "disney"],
+                    especie: "Alien",
+                    tamanho: "",
+                    estado: "",
+                    imagens: ["images/STITCH_LOTE_2.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Lote de pelúcias do Stitch.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "stitch-azul",
+                    titulo: "Stitch Azul",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["stitch"],
+                    especie: "Alien",
+                    tamanho: "",
+                    estado: "",
+                    imagens: ["images/STITCH_AZUL.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Stitch clássico azul.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "stitch-sorvetinho",
+                    titulo: "Stitch – Sorvetinho",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["stitch", "edição"],
+                    especie: "Alien",
+                    imagens: ["images/STITCH_SORVETINHO.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Stitch com sorvete.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "stitch-suspensorio",
+                    titulo: "Stitch – Suspensório",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["stitch"],
+                    especie: "Alien",
+                    imagens: ["images/STITCH_SUSPENSORIO.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Stitch com suspensório.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  {
-    id: "angel-rosa",
-    titulo: "Angel Rosa (Lilo & Stitch)",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["angel","stitch"],
-    especie: "Alien",
-    imagens: ["images/ANGEL_ROSA.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Angel rosa da franquia Stitch.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "angel-moranguinho",
-    titulo: "Angel Moranguinho (Lilo & Stitch)",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["angel","stitch"],
-    especie: "Alien",
-    imagens: ["images/ANGEL_MORANGUINHO.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Angel com tema morango.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "angel-xepa",
-    titulo: "Angel Xepa (Lilo & Stitch)",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["angel","stitch"],
-    especie: "Alien",
-    imagens: ["images/ANGEL_XEPA.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Variante Angel.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                {
+                    id: "angel-rosa",
+                    titulo: "Angel Rosa (Lilo & Stitch)",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["angel", "stitch"],
+                    especie: "Alien",
+                    imagens: ["images/ANGEL_ROSA.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Angel rosa da franquia Stitch.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "angel-moranguinho",
+                    titulo: "Angel Moranguinho (Lilo & Stitch)",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 100.0,
+                    moeda: "BRL",
+                    tags: ["angel", "stitch"],
+                    especie: "Alien",
+                    imagens: ["images/ANGEL_MORANGUINHO.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Angel com tema morango.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "angel-xepa",
+                    titulo: "Angel Xepa (Lilo & Stitch)",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["angel", "stitch"],
+                    especie: "Alien",
+                    imagens: ["images/ANGEL_XEPA.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Variante Angel.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  {
-    id: "sullivan-mike",
-    titulo: "Sullivan & Mike (Monstros S.A.) – 2 fotos",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["monstros sa","pixar"],
-    especie: "Monstros",
-    imagens: ["images/SULLIVAN_MIKE_1.jpg","images/SULLIVAN_MIKE_2.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Dupla Mike e Sullivan.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "sullivan-gigante",
-    titulo: "Sullivan Gigante (Monstros S.A.)",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["gigante","monstros sa"],
-    especie: "Monstro",
-    imagens: ["images/SULLIVAN_GIGANTE.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Versão grande do Sullivan.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "toy-story",
-    titulo: "Toy Story (lote)",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["toy story","lote"],
-    especie: "Vários",
-    imagens: ["images/TOY_STORY.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Lote de personagens Toy Story.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                {
+                    id: "sullivan-mike",
+                    titulo: "Sullivan & Mike (Monstros S.A.) – 2 fotos",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 80.0,
+                    moeda: "BRL",
+                    tags: ["monstros sa", "pixar"],
+                    especie: "Monstros",
+                    imagens: ["images/SULLIVAN_MIKE_1.jpg", "images/SULLIVAN_MIKE_2.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Dupla Mike e Sullivan.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "sullivan-gigante",
+                    titulo: "Sullivan Gigante (Monstros S.A.)",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 250.0,
+                    moeda: "BRL",
+                    tags: ["gigante", "monstros sa"],
+                    especie: "Monstro",
+                    imagens: ["images/SULLIVAN_GIGANTE.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Versão grande do Sullivan.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "toy-story",
+                    titulo: "Toy Story (lote)",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 80.0,
+                    moeda: "BRL",
+                    tags: ["toy story", "lote"],
+                    especie: "Vários",
+                    imagens: ["images/TOY_STORY.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Lote de personagens Toy Story.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  {
-    id: "tristeza-divertidamente",
-    titulo: "Tristeza – Divertida Mente",
-    categoria: "Disney",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["divertida mente","inside out"],
-    especie: "Emoção",
-    imagens: ["images/TRISTEZA_DIVERTIDAMENTE.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Personagem Tristeza.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                {
+                    id: "tristeza-divertidamente",
+                    titulo: "Tristeza – Divertida Mente",
+                    categoria: "Disney",
+                    condicao: "Novo",
+                    preco: 350.0,
+                    moeda: "BRL",
+                    tags: ["divertida mente", "inside out"],
+                    especie: "Emoção",
+                    imagens: ["images/TRISTEZA_DIVERTIDAMENTE.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Personagem Tristeza.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  // DreamWorks – Como treinar seu dragão
-  {
-    id: "furia-da-luz",
-    titulo: "Fúria da Luz (4 fotos)",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["how to train your dragon","light fury"],
-    especie: "Dragão",
-    imagens: [
-      "images/FURIA_DA_LUZ_1.jpg",
-      "images/FURIA_DA_LUZ_2.jpg",
-      "images/FURIA_DA_LUZ_TOP_1.jpg",
-      "images/FURIA_DA_LUZ_TOP_2.jpg",
-    ],
-    criadoEm: "2025-10-05",
-    descricao: "Pelúcia da Fúria da Luz.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "furia-da-noite",
-    titulo: "Fúria da Noite (2 fotos)",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["how to train your dragon","toothless"],
-    especie: "Dragão",
-    imagens: ["images/FURIA_DA_NOITE_1.jpg","images/FURIA_DA_NOITE_2.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Pelúcia do Banguela / Fúria da Noite.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                // DreamWorks – Como treinar seu dragão
+                {
+                    id: "furia-da-luz",
+                    titulo: "Fúria da Luz",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["how to train your dragon", "light fury"],
+                    especie: "Dragão",
+                    imagens: ["images/FURIA_DA_LUZ_1.jpg", "images/FURIA_DA_LUZ_2.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia da Fúria da Luz.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "furia-da-noite",
+                    titulo: "Fúria da Noite (2 fotos)",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 300.0,
+                    moeda: "BRL",
+                    tags: ["how to train your dragon", "toothless"],
+                    especie: "Dragão",
+                    imagens: ["images/FURIA_DA_NOITE_1.jpg", "images/FURIA_DA_NOITE_2.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia do Banguela / Fúria da Noite.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "furia-da-luz-top",
+                    titulo: "Fúria da Luz - Olhos Brilhantes",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 350.0,
+                    moeda: "BRL",
+                    tags: ["how to train your dragon", "light fury"],
+                    especie: "Dragão",
+                    imagens: ["images/FURIA_DA_LUZ_TOP_1.jpg", "images/FURIA_DA_LUZ_TOP_2.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia da Fúria da Luz.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  // Super-heróis / Marvel
-  {
-    id: "homem-aranha",
-    titulo: "Homem-Aranha",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["marvel","spider-man"],
-    especie: "Herói",
-    imagens: ["images/HOMEM_ARANHA.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Pelúcia do Spider-Man.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "hulk",
-    titulo: "Hulk",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["marvel","hulk"],
-    especie: "Herói",
-    imagens: ["images/HULK.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Pelúcia do Hulk.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "hulk-homem-aranha",
-    titulo: "Hulk + Homem-Aranha (lote)",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["marvel","lote"],
-    especie: "Heróis",
-    imagens: ["images/HULK_HOMEM_ARANHA.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Lote com Hulk e Homem-Aranha.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                // Super-heróis / Marvel
+                {
+                    id: "homem-aranha",
+                    titulo: "Homem-Aranha",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 250.0,
+                    moeda: "BRL",
+                    tags: ["marvel", "spider-man"],
+                    especie: "Herói",
+                    imagens: ["images/HOMEM_ARANHA.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia do Spider-Man.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "hulk",
+                    titulo: "Hulk",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 250.0,
+                    moeda: "BRL",
+                    tags: ["marvel", "hulk"],
+                    especie: "Herói",
+                    imagens: ["images/HULK.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia do Hulk.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "hulk-homem-aranha",
+                    titulo: "Hulk + Homem-Aranha (lote)",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 400.0,
+                    moeda: "BRL",
+                    tags: ["marvel", "lote"],
+                    especie: "Heróis",
+                    imagens: ["images/HULK_HOMEM_ARANHA.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Lote com Hulk e Homem-Aranha.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  // Animes / Games
-  {
-    id: "dragon-ball",
-    titulo: "Dragon Ball",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["anime"],
-    especie: "Personagem",
-    imagens: ["images/DRAGON_BALL.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Pelúcia temática Dragon Ball.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "wartortle",
-    titulo: "Pokémon – Wartortle",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["pokemon"],
-    especie: "Tartaruga",
-    imagens: ["images/WARTORTLE.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Pelúcia do Wartortle.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                // Animes / Games
+                {
+                    id: "dragon-ball",
+                    titulo: "Dragon Ball",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 80.0,
+                    moeda: "BRL",
+                    tags: ["anime"],
+                    especie: "Personagem",
+                    imagens: ["images/DRAGON_BALL.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia temática Dragon Ball.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "wartortle",
+                    titulo: "Pokémon – Wartortle",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 350.0,
+                    moeda: "BRL",
+                    tags: ["pokemon"],
+                    especie: "Tartaruga",
+                    imagens: ["images/WARTORTLE.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Pelúcia do Wartortle.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  // Nickelodeon / Bob Esponja
-  {
-    id: "bob-esponja-colecao",
-    titulo: "Bob Esponja – Coleção",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["nickelodeon"],
-    especie: "Esponja",
-    imagens: ["images/BOB_ESPONJA_COLECAO.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Coleção Bob Esponja.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
-  {
-    id: "patrick-lula-molusco",
-    titulo: "Patrick & Lula Molusco (lote)",
-    categoria: "Outras",
-    condicao: "Usado",
-    preco: 0, moeda: "BRL",
-    tags: ["nickelodeon","lote"],
-    especie: "Personagens",
-    imagens: ["images/PATRICK_LULA_MOLUSCO.jpg"],
-    criadoEm: "2025-10-05",
-    descricao: "Patrick Estrela e Lula Molusco.",
-    status: "Disponível", frete: "", retirada: "", linkExterno: ""
-  },
+                // Nickelodeon / Bob Esponja
+                {
+                    id: "bob-esponja-colecao",
+                    titulo: "Bob Esponja – Coleção",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 160.0,
+                    moeda: "BRL",
+                    tags: ["nickelodeon"],
+                    especie: "Esponja",
+                    imagens: ["images/BOB_ESPONJA_COLECAO.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Coleção Bob Esponja.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+                {
+                    id: "patrick-lula-molusco",
+                    titulo: "Patrick & Lula Molusco (lote)",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 80.0,
+                    moeda: "BRL",
+                    tags: ["nickelodeon", "lote"],
+                    especie: "Personagens",
+                    imagens: ["images/PATRICK_LULA_MOLUSCO.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "Patrick Estrela e Lula Molusco.",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  // Outras
-  { id: "capivara-lote",
-   titulo: "Capivara (lote)",
-   categoria: "Outras",
-   condicao: "Usado",
-   preco: 0,
-   moeda: "BRL",
-   tags: ["capivara","lote"],
-   especie: "Capivara", 
-   imagens: ["images/CAPIVARA_LOTE.jpg"],
-   criadoEm: "2025-10-05",
-   descricao: "", 
-   status: "Disponível",
-   frete: "", 
-   retirada: "",
-   linkExterno: "" },
+                // Outras
+                {
+                    id: "capivara-lote",
+                    titulo: "Capivara (lote)",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 200.0,
+                    moeda: "BRL",
+                    tags: ["capivara", "lote"],
+                    especie: "Capivara",
+                    imagens: ["images/CAPIVARA_LOTE.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  { id: "pantera-cor-de-rosa", 
-   titulo: "Pantera Cor-de-Rosa", 
-   categoria: "Outras", 
-   condicao: "Usado",
-   preco: 0, 
-   moeda: "BRL", 
-   tags: ["clássico"],
-   especie: "Pantera",
-   imagens: ["images/PANTERA_COR_DE_ROSA.jpg"],
-   criadoEm: "2025-10-05",
-   descricao: "",
-   status: "Disponível",
-   frete: "",
-   retirada: "", 
-   linkExterno: "" },
+                {
+                    id: "pantera-cor-de-rosa",
+                    titulo: "Pantera Cor-de-Rosa",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 250.0,
+                    moeda: "BRL",
+                    tags: ["clássico"],
+                    especie: "Pantera",
+                    imagens: ["images/PANTERA_COR_DE_ROSA.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  { id: "vaquinha",
-   titulo: "Vaquinha",
-   categoria: "Outras", 
-   condicao: "Usado",
-   preco: 0,
-   moeda: "BRL",
-   tags: ["fazenda"],
-   especie: "Vaca",
-   imagens: ["images/VAQUINHA.jpg"],
-   criadoEm: "2025-10-05",
-   descricao: "",
-   status: "Disponível",
-   frete: "",
-   retirada: "",
-   linkExterno: "" },
+                {
+                    id: "vaquinha",
+                    titulo: "Vaquinha",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 150.0,
+                    moeda: "BRL",
+                    tags: ["fazenda"],
+                    especie: "Vaca",
+                    imagens: ["images/VAQUINHA.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
 
-  { id: "urso-azul", 
-   titulo: "Urso Azul",
-   categoria: "Outras",
-   condicao: "Usado",
-   preco: 0,
-   moeda: "BRL",
-   tags: ["urso"],
-   especie: "Urso",
-   imagens: ["images/URSO_AZUL.jpg"],
-   criadoEm: "2025-10-05",
-   descricao: "",
-   status: "Disponível",
-   frete: "",
-   retirada: "",
-   linkExterno: "" }
-    ];
+                {
+                    id: "urso-azul",
+                    titulo: "Urso Azul",
+                    categoria: "Outras",
+                    condicao: "Novo",
+                    preco: 150.0,
+                    moeda: "BRL",
+                    tags: ["urso"],
+                    especie: "Urso",
+                    imagens: ["images/URSO_AZUL.jpg"],
+                    criadoEm: "2025-10-05",
+                    descricao: "",
+                    status: "Disponível",
+                    frete: "",
+                    retirada: "",
+                    linkExterno: "",
+                },
+            ];
 
-    // ======= UTIL =======
-    const fmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+            // ======= UTIL =======
+            const fmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
-    function buildWaLink(produto) {
-      const base = `https://wa.me/${WHATS_NUMBER}`;
-      const msg = encodeURIComponent(
-        `Olá! Tenho interesse no produto "${produto.titulo}" (ID: ${produto.id}). Pode me passar mais detalhes?`
-      );
-      return `${base}?text=${msg}`;
-    }
+            function buildWaLink(produto) {
+                const base = `https://wa.me/${WHATS_NUMBER}`;
+                const msg = encodeURIComponent(`Olá! Tenho interesse no produto "${produto.titulo}" (ID: ${produto.id}). Pode me passar mais detalhes?`);
+                return `${base}?text=${msg}`;
+            }
 
-    function el(tag, classes = "", attrs = {}) {
-      const e = document.createElement(tag);
-      if (classes) e.className = classes;
-      Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
-      return e;
-    }
+            function el(tag, classes = "", attrs = {}) {
+                const e = document.createElement(tag);
+                if (classes) e.className = classes;
+                Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v));
+                return e;
+            }
 
-    function applyStateToControls(state){
-      document.getElementById('q').value = state.q || '';
-      document.getElementById('cat').value = state.cat || '';
-      document.getElementById('cond').value = state.cond || '';
-      document.getElementById('status').value = state.status || '';
-      document.getElementById('sort').value = state.sort || 'recent';
-    }
+            function applyStateToControls(state) {
+                document.getElementById("q").value = state.q || "";
+                document.getElementById("cat").value = state.cat || "";
+                document.getElementById("cond").value = state.cond || "";
+                document.getElementById("status").value = state.status || "";
+                document.getElementById("sort").value = state.sort || "recent";
+            }
 
-    function readState(){
-      const sp = new URLSearchParams(location.hash.slice(1));
-      return {
-        q: sp.get('q') || '',
-        cat: sp.get('cat') || '',
-        cond: sp.get('cond') || '',
-        status: sp.get('status') || '',
-        sort: sp.get('sort') || 'recent',
-      };
-    }
+            function readState() {
+                const sp = new URLSearchParams(location.hash.slice(1));
+                return {
+                    q: sp.get("q") || "",
+                    cat: sp.get("cat") || "",
+                    cond: sp.get("cond") || "",
+                    status: sp.get("status") || "",
+                    sort: sp.get("sort") || "recent",
+                };
+            }
 
-    function writeState(state){
-      const sp = new URLSearchParams(state);
-      location.hash = sp.toString();
-    }
+            function writeState(state) {
+                const sp = new URLSearchParams(state);
+                location.hash = sp.toString();
+            }
 
-    function filterAndSort(list, state){
-      let r = [...list];
-      if (state.q) {
-        const ql = state.q.toLowerCase();
-        r = r.filter(p => (
-          (p.titulo||'').toLowerCase().includes(ql) ||
-          (p.tags||[]).join(" ").toLowerCase().includes(ql) ||
-          (p.especie||'').toLowerCase().includes(ql) ||
-          (p.expressao||'').toLowerCase().includes(ql)
-        ));
-      }
-      if (state.cat) r = r.filter(p => p.categoria === state.cat);
-      if (state.cond) r = r.filter(p => p.condicao === state.cond);
-      if (state.status) r = r.filter(p => (p.status||'') === state.status);
+            function filterAndSort(list, state) {
+                let r = [...list];
+                if (state.q) {
+                    const ql = state.q.toLowerCase();
+                    r = r.filter((p) => (p.titulo || "").toLowerCase().includes(ql) || (p.tags || []).join(" ").toLowerCase().includes(ql) || (p.especie || "").toLowerCase().includes(ql) || (p.expressao || "").toLowerCase().includes(ql));
+                }
+                if (state.cat) r = r.filter((p) => p.categoria === state.cat);
+                if (state.cond) r = r.filter((p) => p.condicao === state.cond);
+                if (state.status) r = r.filter((p) => (p.status || "") === state.status);
 
-      switch(state.sort){
-        case 'price_asc': r.sort((a,b)=>a.preco-b.preco); break;
-        case 'price_desc': r.sort((a,b)=>b.preco-a.preco); break;
-        case 'alpha': r.sort((a,b)=>a.titulo.localeCompare(b.titulo)); break;
-        default: r.sort((a,b)=>new Date(b.criadoEm) - new Date(a.criadoEm));
-      }
-      return r;
-    }
+                switch (state.sort) {
+                    case "price_asc":
+                        r.sort((a, b) => a.preco - b.preco);
+                        break;
+                    case "price_desc":
+                        r.sort((a, b) => b.preco - a.preco);
+                        break;
+                    case "alpha":
+                        r.sort((a, b) => a.titulo.localeCompare(b.titulo));
+                        break;
+                    default:
+                        r.sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+                }
+                return r;
+            }
 
-    function render(list){
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '';
+            function render(list) {
+                const grid = document.getElementById("grid");
+                grid.innerHTML = "";
 
-      if (!list.length){
-        const empty = el('div','text-center py-20 text-neutral-400');
-        empty.textContent = 'Nenhum item encontrado. Tente limpar os filtros ou buscar por outro termo.';
-        grid.appendChild(empty);
-        return;
-      }
+                if (!list.length) {
+                    const empty = el("div", "text-center py-20 text-neutral-400");
+                    empty.textContent = "Nenhum item encontrado. Tente limpar os filtros ou buscar por outro termo.";
+                    grid.appendChild(empty);
+                    return;
+                }
 
-      const wrap = el('div','grid gap-4 sm:grid-cols-2 lg:grid-cols-3');
-      list.forEach(p => {
-        const card = el('article','group rounded-2xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 transition overflow-hidden');
+                const wrap = el("div", "grid gap-4 sm:grid-cols-2 lg:grid-cols-3");
+                list.forEach((p) => {
+                    const card = el("article", "group rounded-2xl border border-neutral-800 bg-neutral-900/60 hover:bg-neutral-900 transition overflow-hidden");
 
-        const imgWrap = el('div','relative aspect-[4/3] bg-neutral-800 overflow-hidden');
-        const img = el('img','h-full w-full object-cover');
-        img.src = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
-        img.alt = p.titulo || 'Produto';
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        imgWrap.appendChild(img);
+                    const imgWrap = el("div", "relative aspect-[4/3] bg-neutral-800 overflow-hidden");
+                    const img = el("img", "h-full w-full object-cover");
+                    img.src = p.imagens && p.imagens[0] ? p.imagens[0] : "";
+                    img.alt = p.titulo || "Produto";
+                    img.loading = "lazy";
+                    img.decoding = "async";
+                    imgWrap.appendChild(img);
 
-        // badges
-        if (p.condicao){
-          const badge = el('span','absolute top-2 left-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
-          badge.textContent = p.condicao;
-          imgWrap.appendChild(badge);
-        }
-        if (p.status && p.status !== 'Disponível'){
-          const sold = el('span','absolute top-2 right-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
-          sold.textContent = p.status.toUpperCase();
-          imgWrap.appendChild(sold);
-        }
-        if (p.frete){
-          const b2 = el('span','absolute bottom-2 left-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
-          b2.textContent = p.frete;
-          imgWrap.appendChild(b2);
-        }
-        if (p.retirada){
-          const b3 = el('span','absolute bottom-2 right-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs');
-          b3.textContent = p.retirada;
-          imgWrap.appendChild(b3);
-        }
+                    // badges
+                    if (p.condicao) {
+                        const badge = el("span", "absolute top-2 left-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs");
+                        badge.textContent = p.condicao;
+                        imgWrap.appendChild(badge);
+                    }
+                    if (p.status && p.status !== "Disponível") {
+                        const sold = el("span", "absolute top-2 right-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs");
+                        sold.textContent = p.status.toUpperCase();
+                        imgWrap.appendChild(sold);
+                    }
+                    if (p.frete) {
+                        const b2 = el("span", "absolute bottom-2 left-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs");
+                        b2.textContent = p.frete;
+                        imgWrap.appendChild(b2);
+                    }
+                    if (p.retirada) {
+                        const b3 = el("span", "absolute bottom-2 right-2 rounded-full bg-neutral-950/70 border border-neutral-700 px-2 py-1 text-xs");
+                        b3.textContent = p.retirada;
+                        imgWrap.appendChild(b3);
+                    }
 
-        // open viewer
-        imgWrap.addEventListener('click', ()=>{
-          const viewer = document.getElementById('viewer');
-          const viewerImg = document.getElementById('viewerImg');
-          viewerImg.src = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
-          viewer.showModal();
-          viewer.addEventListener('click', (e)=>{ if(e.target===viewer) viewer.close(); }, { once:true });
-        });
+                    // open viewer
+                    imgWrap.addEventListener("click", () => {
+                        const viewer = document.getElementById("viewer");
+                        const viewerImg = document.getElementById("viewerImg");
+                        viewerImg.src = p.imagens && p.imagens[0] ? p.imagens[0] : "";
+                        viewer.showModal();
+                        viewer.addEventListener(
+                            "click",
+                            (e) => {
+                                if (e.target === viewer) viewer.close();
+                            },
+                            { once: true }
+                        );
+                    });
 
-        const content = el('div','p-4 space-y-2');
-        const title = el('h3','font-semibold line-clamp-2');
-        title.textContent = p.titulo || 'Sem título';
+                    const content = el("div", "p-4 space-y-2");
+                    const title = el("h3", "font-semibold line-clamp-2");
+                    title.textContent = p.titulo || "Sem título";
 
-        const meta = el('p','text-sm text-neutral-400');
-        const bits = [p.especie, p.expressao, p.tamanho].filter(Boolean).join(' • ');
-        meta.textContent = bits || '\u00A0';
+                    const meta = el("p", "text-sm text-neutral-400");
+                    const bits = [p.especie, p.expressao, p.tamanho].filter(Boolean).join(" • ");
+                    meta.textContent = bits || "\u00A0";
 
-        const priceRow = el('div','flex items-center justify-between gap-2');
-        const price = el('div','text-lg font-bold');
-        price.textContent = isFinite(p.preco) ? fmt.format(Number(p.preco)) : '—';
-        const city = el('span','text-xs text-neutral-400');
-        city.textContent = STORE_CITY;
-        priceRow.append(price, city);
+                    const priceRow = el("div", "flex items-center justify-between gap-2");
+                    const price = el("div", "text-lg font-bold");
+                    price.textContent = isFinite(p.preco) ? fmt.format(Number(p.preco)) : "—";
+                    const city = el("span", "text-xs text-neutral-400");
+                    city.textContent = STORE_CITY;
+                    priceRow.append(price, city);
 
-        const tags = el('div','flex flex-wrap gap-1');
-        (p.tags||[]).forEach(t=>{
-          const chip = el('span','rounded-full border border-neutral-700 px-2 py-0.5 text-xs text-neutral-300');
-          chip.textContent = t;
-          tags.appendChild(chip);
-        });
+                    const tags = el("div", "flex flex-wrap gap-1");
+                    (p.tags || []).forEach((t) => {
+                        const chip = el("span", "rounded-full border border-neutral-700 px-2 py-0.5 text-xs text-neutral-300");
+                        chip.textContent = t;
+                        tags.appendChild(chip);
+                    });
 
-        const actions = el('div','grid grid-cols-2 gap-2 pt-1');
-        const btnWa = el('a','inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950 col-span-2', { href:'#', target:'_blank', rel:'noopener', 'aria-label': 'Falar no WhatsApp' });
-        btnWa.textContent = 'Falar no WhatsApp';
-        btnWa.addEventListener('click', (e)=>{ e.preventDefault(); window.open(buildWaLink(p), '_blank'); });
+                    const actions = el("div", "grid grid-cols-2 gap-2 pt-1");
+                    const btnWa = el("a", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-emerald-500 hover:bg-emerald-400 text-emerald-950 col-span-2", {
+                        href: "#",
+                        target: "_blank",
+                        rel: "noopener",
+                        "aria-label": "Falar no WhatsApp",
+                    });
+                    btnWa.textContent = "Falar no WhatsApp";
+                    btnWa.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        window.open(buildWaLink(p), "_blank");
+                    });
 
-        const btnExt = el('a','inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700', { href: p.linkExterno||'#', target:'_blank', rel:'noopener' });
-        btnExt.textContent = 'Ver anúncio';
-        if (!p.linkExterno) { btnExt.classList.add('pointer-events-none','opacity-50'); }
+                    const btnExt = el("a", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700", {
+                        href: p.linkExterno || "#",
+                        target: "_blank",
+                        rel: "noopener",
+                    });
+                    btnExt.textContent = "Ver anúncio";
+                    if (!p.linkExterno) {
+                        btnExt.classList.add("pointer-events-none", "opacity-50");
+                    }
 
-        const btnFotos = el('button','inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700');
-        btnFotos.textContent = 'Mais fotos';
-        btnFotos.addEventListener('click', ()=>{
-          const viewer = document.getElementById('viewer');
-          const viewerImg = document.getElementById('viewerImg');
-          let idx = 0;
-          viewerImg.src = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
-          viewer.showModal();
-          viewer.addEventListener('click', (e)=>{ if(e.target===viewer) viewer.close(); }, { once:true });
-          viewer.addEventListener('keydown', (e)=>{
-            if (e.key==='ArrowRight' || e.key===' ') { idx = (idx+1) % (p.imagens?.length||1); viewerImg.src = p.imagens[idx]; }
-            if (e.key==='ArrowLeft') { idx = (idx-1 + (p.imagens?.length||1)) % (p.imagens?.length||1); viewerImg.src = p.imagens[idx]; }
-          }, { once:true });
-        });
+                    const btnFotos = el("button", "inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition bg-neutral-800 hover:bg-neutral-700 text-neutral-100 border border-neutral-700");
+                    btnFotos.textContent = "Mais fotos";
+                    btnFotos.addEventListener("click", () => {
+                        const viewer = document.getElementById("viewer");
+                        const viewerImg = document.getElementById("viewerImg");
+                        let idx = 0;
+                        viewerImg.src = p.imagens && p.imagens[0] ? p.imagens[0] : "";
+                        viewer.showModal();
+                        viewer.addEventListener(
+                            "click",
+                            (e) => {
+                                if (e.target === viewer) viewer.close();
+                            },
+                            { once: true }
+                        );
+                        viewer.addEventListener(
+                            "keydown",
+                            (e) => {
+                                if (e.key === "ArrowRight" || e.key === " ") {
+                                    idx = (idx + 1) % (p.imagens?.length || 1);
+                                    viewerImg.src = p.imagens[idx];
+                                }
+                                if (e.key === "ArrowLeft") {
+                                    idx = (idx - 1 + (p.imagens?.length || 1)) % (p.imagens?.length || 1);
+                                    viewerImg.src = p.imagens[idx];
+                                }
+                            },
+                            { once: true }
+                        );
+                    });
 
-        if ((p.status||'') !== 'Disponível') {
-          btnWa.classList.add('pointer-events-none','opacity-50');
-        }
+                    if ((p.status || "") !== "Disponível") {
+                        btnWa.classList.add("pointer-events-none", "opacity-50");
+                    }
 
-        actions.append(btnExt, btnFotos, btnWa);
+                    actions.append(btnExt, btnFotos, btnWa);
 
-        content.append(title, meta, priceRow, tags, actions);
-        card.append(imgWrap, content);
-        wrap.appendChild(card);
-      });
+                    content.append(title, meta, priceRow, tags, actions);
+                    card.append(imgWrap, content);
+                    wrap.appendChild(card);
+                });
 
-      grid.appendChild(wrap);
-      document.getElementById('whatsHeader').href = `https://wa.me/${WHATS_NUMBER}`;
-      document.getElementById('whatsFooter').href = `https://wa.me/${WHATS_NUMBER}`;
-    }
+                grid.appendChild(wrap);
+                document.getElementById("whatsHeader").href = `https://wa.me/${WHATS_NUMBER}`;
+                document.getElementById("whatsFooter").href = `https://wa.me/${WHATS_NUMBER}`;
+            }
 
-    // ======= CSV =======
-    const CSV_HEADERS = [
-      'id','titulo','categoria','condicao','preco','moeda','tags','especie','expressao','tamanho','peso','estado','imagens','criadoEm','descricao','status','frete','retirada','linkExterno'
-    ];
+            // ======= CSV =======
+            const CSV_HEADERS = ["id", "titulo", "categoria", "condicao", "preco", "moeda", "tags", "especie", "expressao", "tamanho", "peso", "estado", "imagens", "criadoEm", "descricao", "status", "frete", "retirada", "linkExterno"];
 
-    function detectDelimiter(headerLine){
-      // tenta ; depois , (Excel PT-BR costuma usar ;)
-      if ((headerLine.match(/;/g)||[]).length >= (headerLine.match(/,/g)||[]).length) return ';';
-      return ',';
-    }
+            function detectDelimiter(headerLine) {
+                // tenta ; depois , (Excel PT-BR costuma usar ;)
+                if ((headerLine.match(/;/g) || []).length >= (headerLine.match(/,/g) || []).length) return ";";
+                return ",";
+            }
 
-    function downloadCsvModel(){
-      const rows = [CSV_HEADERS.join(',')];
-      rows.push('stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,');
-      const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'modelo_produtos.csv'; a.click();
-      URL.revokeObjectURL(url);
-    }
+            function downloadCsvModel() {
+                const rows = [CSV_HEADERS.join(",")];
+                rows.push("stitch-02,Disney – Stitch Médio,Disney,Novo,299.9,BRL,disney|fofo,Alien,Sorriso,40 cm,,Lacrado,images/stitch2.jpg,2025-09-20,Stitch lindão,Disponível,frete a combinar,,");
+                const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "modelo_produtos.csv";
+                a.click();
+                URL.revokeObjectURL(url);
+            }
 
-    function parseCsv(text){
-      const lines = text.split(/\r?\n/).filter(Boolean);
-      if (!lines.length) return [];
-      const delim = detectDelimiter(lines[0]);
-      const header = lines.shift().split(delim).map(h=>h.trim());
-      const idx = (name)=> header.indexOf(name);
-      return lines.map(l=>{
-        const c = l.split(delim).map(v=> v.trim());
-        const obj = {
-          id: c[idx('id')]||'',
-          titulo: c[idx('titulo')]||'',
-          categoria: c[idx('categoria')]||'',
-          condicao: c[idx('condicao')]||'',
-          preco: Number((c[idx('preco')]||'').replace(',','.'))||0,
-          moeda: c[idx('moeda')]||'BRL',
-          tags: (c[idx('tags')]||'').split('|').filter(Boolean),
-          especie: c[idx('especie')]||'',
-          expressao: c[idx('expressao')]||'',
-          tamanho: c[idx('tamanho')]||'',
-          peso: c[idx('peso')]||'',
-          estado: c[idx('estado')]||'',
-          imagens: (c[idx('imagens')]||'').split('|').filter(Boolean),
-          criadoEm: c[idx('criadoEm')]||new Date().toISOString().slice(0,10),
-          descricao: c[idx('descricao')]||'',
-          status: c[idx('status')]||'Disponível',
-          frete: c[idx('frete')]||'',
-          retirada: c[idx('retirada')]||'',
-          linkExterno: c[idx('linkExterno')]||''
-        };
-        return obj;
-      });
-    }
+            function parseCsv(text) {
+                const lines = text.split(/\r?\n/).filter(Boolean);
+                if (!lines.length) return [];
+                const delim = detectDelimiter(lines[0]);
+                const header = lines
+                    .shift()
+                    .split(delim)
+                    .map((h) => h.trim());
+                const idx = (name) => header.indexOf(name);
+                return lines.map((l) => {
+                    const c = l.split(delim).map((v) => v.trim());
+                    const obj = {
+                        id: c[idx("id")] || "",
+                        titulo: c[idx("titulo")] || "",
+                        categoria: c[idx("categoria")] || "",
+                        condicao: c[idx("condicao")] || "",
+                        preco: Number((c[idx("preco")] || "").replace(",", ".")) || 0,
+                        moeda: c[idx("moeda")] || "BRL",
+                        tags: (c[idx("tags")] || "").split("|").filter(Boolean),
+                        especie: c[idx("especie")] || "",
+                        expressao: c[idx("expressao")] || "",
+                        tamanho: c[idx("tamanho")] || "",
+                        peso: c[idx("peso")] || "",
+                        estado: c[idx("estado")] || "",
+                        imagens: (c[idx("imagens")] || "").split("|").filter(Boolean),
+                        criadoEm: c[idx("criadoEm")] || new Date().toISOString().slice(0, 10),
+                        descricao: c[idx("descricao")] || "",
+                        status: c[idx("status")] || "Disponível",
+                        frete: c[idx("frete")] || "",
+                        retirada: c[idx("retirada")] || "",
+                        linkExterno: c[idx("linkExterno")] || "",
+                    };
+                    return obj;
+                });
+            }
 
-    async function handleCsvFile(file){
-      try {
-        const text = await file.text();
-        const items = parseCsv(text);
-        const map = new Map(produtos.map(p=>[p.id,p]));
-        items.forEach(i=> map.set(i.id, i));
-        produtos = Array.from(map.values());
-        const st = readState();
-        render(filterAndSort(produtos, st));
-        alert(`Importados ${items.length} item(ns).`);
-      } catch (e){
-        console.error(e);
-        alert('Falha ao importar CSV. Verifique o delimitador (use ; ou ,) e os cabeçalhos.');
-      }
-    }
+            async function handleCsvFile(file) {
+                try {
+                    const text = await file.text();
+                    const items = parseCsv(text);
+                    const map = new Map(produtos.map((p) => [p.id, p]));
+                    items.forEach((i) => map.set(i.id, i));
+                    produtos = Array.from(map.values());
+                    const st = readState();
+                    render(filterAndSort(produtos, st));
+                    alert(`Importados ${items.length} item(ns).`);
+                } catch (e) {
+                    console.error(e);
+                    alert("Falha ao importar CSV. Verifique o delimitador (use ; ou ,) e os cabeçalhos.");
+                }
+            }
 
-    async function autoLoadCsv(){
-      // carrega automaticamente /produtos.csv se existir no mesmo diretório
-      try {
-        const res = await fetch('produtos.csv', { cache: 'no-store' });
-        if (!res.ok) return; // não existe, segue com dados do JS
-        const text = await res.text();
-        const items = parseCsv(text);
-        if (items.length){
-          produtos = items;
-          const st = readState();
-          render(filterAndSort(produtos, st));
-          console.info(`Carregado produtos.csv (${items.length} itens).`);
-        }
-      } catch (e){ console.info('Sem produtos.csv'); }
-    }
+            async function autoLoadCsv() {
+                // carrega automaticamente /produtos.csv se existir no mesmo diretório
+                try {
+                    const res = await fetch("produtos.csv", { cache: "no-store" });
+                    if (!res.ok) return; // não existe, segue com dados do JS
+                    const text = await res.text();
+                    const items = parseCsv(text);
+                    if (items.length) {
+                        produtos = items;
+                        const st = readState();
+                        render(filterAndSort(produtos, st));
+                        console.info(`Carregado produtos.csv (${items.length} itens).`);
+                    }
+                } catch (e) {
+                    console.info("Sem produtos.csv");
+                }
+            }
 
-    // ======= INIT =======
-    const controls = ['q','cat','cond','status','sort'];
-    controls.forEach(id => {
-      document.getElementById(id).addEventListener('input', ()=>{
-        const state = {
-          q: document.getElementById('q').value.trim(),
-          cat: document.getElementById('cat').value,
-          cond: document.getElementById('cond').value,
-          status: document.getElementById('status').value,
-          sort: document.getElementById('sort').value,
-        };
-        writeState(state);
-        render(filterAndSort(produtos, state));
-      })
-    });
+            // ======= INIT =======
+            const controls = ["q", "cat", "cond", "status", "sort"];
+            controls.forEach((id) => {
+                document.getElementById(id).addEventListener("input", () => {
+                    const state = {
+                        q: document.getElementById("q").value.trim(),
+                        cat: document.getElementById("cat").value,
+                        cond: document.getElementById("cond").value,
+                        status: document.getElementById("status").value,
+                        sort: document.getElementById("sort").value,
+                    };
+                    writeState(state);
+                    render(filterAndSort(produtos, state));
+                });
+            });
 
-    window.addEventListener('hashchange', ()=>{
-      const st = readState();
-      applyStateToControls(st);
-      render(filterAndSort(produtos, st));
-    });
+            window.addEventListener("hashchange", () => {
+                const st = readState();
+                applyStateToControls(st);
+                render(filterAndSort(produtos, st));
+            });
 
-    // Admin: mostrar/ocultar botões e dicas
-    function setAdminMode(on){
-      document.querySelectorAll('[data-admin]').forEach(el=> el.classList.toggle('hidden', !on));
-      if(on) { localStorage.setItem('admin','1'); } else { localStorage.removeItem('admin'); }
-    }
-    setAdminMode(ADMIN);
+            // Admin: mostrar/ocultar botões e dicas
+            function setAdminMode(on) {
+                document.querySelectorAll("[data-admin]").forEach((el) => el.classList.toggle("hidden", !on));
+                if (on) {
+                    localStorage.setItem("admin", "1");
+                } else {
+                    localStorage.removeItem("admin");
+                }
+            }
+            setAdminMode(ADMIN);
 
-    // Se não estiver em modo admin, não registra handlers de CSV
-    if (ADMIN){
-      const btnModel = document.getElementById('downloadCsvModel');
-      if (btnModel) btnModel.addEventListener('click', downloadCsvModel);
-      const inp1 = document.getElementById('csvInput');
-      if (inp1) inp1.addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
-      const inp2 = document.getElementById('csvInput2');
-      if (inp2) inp2.addEventListener('change', (e)=>{ if(e.target.files[0]) handleCsvFile(e.target.files[0]); });
-    }
+            // Se não estiver em modo admin, não registra handlers de CSV
+            if (ADMIN) {
+                const btnModel = document.getElementById("downloadCsvModel");
+                if (btnModel) btnModel.addEventListener("click", downloadCsvModel);
+                const inp1 = document.getElementById("csvInput");
+                if (inp1)
+                    inp1.addEventListener("change", (e) => {
+                        if (e.target.files[0]) handleCsvFile(e.target.files[0]);
+                    });
+                const inp2 = document.getElementById("csvInput2");
+                if (inp2)
+                    inp2.addEventListener("change", (e) => {
+                        if (e.target.files[0]) handleCsvFile(e.target.files[0]);
+                    });
+            }
 
-    // Atalho: Ctrl+Shift+A alterna admin on/off
-    window.addEventListener('keydown', (e)=>{
-      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='a'){
-        const anyAdminEl = document.querySelector('[data-admin]');
-        const currentlyVisible = anyAdminEl && !anyAdminEl.classList.contains('hidden');
-        setAdminMode(!currentlyVisible);
-      }
-    });
+            // Atalho: Ctrl+Shift+A alterna admin on/off
+            window.addEventListener("keydown", (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
+                    const anyAdminEl = document.querySelector("[data-admin]");
+                    const currentlyVisible = anyAdminEl && !anyAdminEl.classList.contains("hidden");
+                    setAdminMode(!currentlyVisible);
+                }
+            });
 
-    // Primeira renderização
-    const initial = readState();
-    applyStateToControls(initial);
-    render(filterAndSort(produtos, initial));
-    autoLoadCsv();
-  </script>
-</body>
+            // Primeira renderização
+            const initial = readState();
+            applyStateToControls(initial);
+            render(filterAndSort(produtos, initial));
+            autoLoadCsv();
+        </script>
+    </body>
 </html>
