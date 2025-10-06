@@ -27,32 +27,31 @@
             }
 
             /* Viewer responsivo: ocupa no máx. 90% da tela, sem scroll interno */
-            #viewer{
-              padding: 0;
-              width: min(90vw, 1200px);
-              max-width: 96vw;
-              max-height: 90vh;
-              overflow: hidden;              /* evita barra de rolagem no dialog */
-              display: flex;
-              align-items: center;
-              justify-content: center;
+            #viewer {
+                padding: 0;
+                width: min(90vw, 1200px);
+                max-width: 96vw;
+                max-height: 90vh;
+                overflow: hidden; /* evita barra de rolagem no dialog */
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            
+
             /* A imagem se ajusta à caixa, preservando proporção */
-            #viewerImg{
-              max-width: 100%;
-              max-height: 90vh;              /* limita pela altura da tela */
-              width: auto;
-              height: auto;
-              object-fit: contain;           /* sem cortes e sem esticar errado */
-              display: block;
+            #viewerImg {
+                max-width: 100%;
+                max-height: 90vh; /* limita pela altura da tela */
+                width: auto;
+                height: auto;
+                object-fit: contain; /* sem cortes e sem esticar errado */
+                display: block;
             }
-            
+
             /* Botões de navegação não “empurram” layout */
-            #viewer [data-nav]{
-              pointer-events: auto;
+            #viewer [data-nav] {
+                pointer-events: auto;
             }
-            
         </style>
     </head>
     <body class="bg-neutral-950 text-neutral-100">
@@ -717,96 +716,116 @@
 
             // ======= VIEWER MULTIFOTOS =======
             function openViewer(p, startIndex = 0) {
-            const viewer = document.getElementById("viewer");
-            const viewerImg = document.getElementById("viewerImg");
+                const viewer = document.getElementById("viewer");
+                const viewerImg = document.getElementById("viewerImg");
 
-            // impede o scroll reset da página ao abrir o dialog
-            const scrollPos = window.scrollY || document.documentElement.scrollTop;
-                
-            viewer.style.overflow = "hidden"; // evita scroll
-            viewer.style.display = "flex";
-            viewer.style.alignItems = "center";
-            viewer.style.justifyContent = "center";
-        
-            const hasMany = Array.isArray(p.imagens) && p.imagens.length > 1;
-        
-            // se não houver imagens
-            if (!p.imagens || !p.imagens.length) {
-                viewerImg.src = "";
-                viewer.showModal();
-                // restaura posição do scroll
-                window.scrollTo({ top: scrollPos, behavior: "instant" });
-                return;
-            }
-        
-            let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
-            const show = (i) => {
-                idx = (i + p.imagens.length) % p.imagens.length;
-                viewerImg.src = p.imagens[idx];
-                viewerImg.style.maxWidth = "90vw";
-                viewerImg.style.maxHeight = "90vh";
-                viewerImg.style.objectFit = "contain";
-            };
-        
-            // cria setas se não existem
-            let btnPrev = viewer.querySelector('[data-nav="prev"]');
-            let btnNext = viewer.querySelector('[data-nav="next"]');
-            if (!btnPrev) {
-                btnPrev = document.createElement("button");
-                btnPrev.dataset.nav = "prev";
-                btnPrev.className =
-                    "absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
-                btnPrev.textContent = "‹";
-                viewer.appendChild(btnPrev);
-            }
-            if (!btnNext) {
-                btnNext = document.createElement("button");
-                btnNext.dataset.nav = "next";
-                btnNext.className =
-                    "absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
-                btnNext.textContent = "›";
-                viewer.appendChild(btnNext);
-            }
-        
-            // exibe setas só se tiver mais de uma imagem
-            btnPrev.style.display = hasMany ? "" : "none";
-            btnNext.style.display = hasMany ? "" : "none";
-        
-            // eventos
-            const onKey = (e) => {
-                if (e.key === "Escape") cleanup();
-                if (!hasMany) return;
-                if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
-                if (e.key === "ArrowLeft") show(idx - 1);
-            };
-            const onBackdrop = (e) => {
-                if (e.target === viewer) cleanup();
-            };
-            const onPrev = () => show(idx - 1);
-            const onNext = () => show(idx + 1);
-            const onImgClick = () => {
-                if (hasMany) show(idx + 1);
-            };
-        
-            function cleanup() {
-                viewer.close();
-                document.removeEventListener("keydown", onKey);
-                viewer.removeEventListener("click", onBackdrop);
-                viewerImg.removeEventListener("click", onImgClick);
-                if (hasMany) {
-                    btnPrev.removeEventListener("click", onPrev);
-                    btnNext.removeEventListener("click", onNext);
+                // ---- impedir "voltar pro topo" ao abrir o dialog
+                const savedScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
+                const root = document.documentElement;
+                const prevScrollBehavior = root.style.scrollBehavior || "";
+                root.style.scrollBehavior = "auto";
+
+                // layout do dialog (sem scroll interno e centralizado)
+                viewer.style.overflow = "hidden";
+                viewer.style.display = "flex";
+                viewer.style.alignItems = "center";
+                viewer.style.justifyContent = "center";
+
+                const hasMany = Array.isArray(p.imagens) && p.imagens.length > 1;
+                if (!p.imagens || !p.imagens.length) {
+                    viewerImg.src = "";
+                    viewer.showModal();
+                    // restaura scroll depois do showModal
+                    requestAnimationFrame(() => {
+                        window.scrollTo(0, savedScroll);
+                        root.style.scrollBehavior = prevScrollBehavior;
+                    });
+                    setTimeout(() => {
+                        window.scrollTo(0, savedScroll);
+                        root.style.scrollBehavior = prevScrollBehavior;
+                    }, 0);
+                    return;
                 }
-            }
-        
-            show(idx);
-            viewer.showModal();
-            document.addEventListener("keydown", onKey);
-            viewer.addEventListener("click", onBackdrop);
-            viewerImg.addEventListener("click", onImgClick);
-            if (hasMany) {
-                btnPrev.addEventListener("click", onPrev);
-                btnNext.addEventListener("click", onNext);
+
+                let idx = Math.max(0, Math.min(startIndex, p.imagens.length - 1));
+                const show = (i) => {
+                    idx = (i + p.imagens.length) % p.imagens.length;
+                    viewerImg.src = p.imagens[idx];
+                    // garante imagem contida no viewport
+                    viewerImg.style.maxWidth = "90vw";
+                    viewerImg.style.maxHeight = "90vh";
+                    viewerImg.style.objectFit = "contain";
+                };
+
+                // cria setas se não existem
+                let btnPrev = viewer.querySelector('[data-nav="prev"]');
+                let btnNext = viewer.querySelector('[data-nav="next"]');
+                if (!btnPrev) {
+                    btnPrev = document.createElement("button");
+                    btnPrev.dataset.nav = "prev";
+                    btnPrev.className = "absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
+                    btnPrev.textContent = "‹";
+                    viewer.appendChild(btnPrev);
+                }
+                if (!btnNext) {
+                    btnNext = document.createElement("button");
+                    btnNext.dataset.nav = "next";
+                    btnNext.className = "absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-2";
+                    btnNext.textContent = "›";
+                    viewer.appendChild(btnNext);
+                }
+
+                // mostra setas só se houver múltiplas imagens
+                btnPrev.style.display = hasMany ? "" : "none";
+                btnNext.style.display = hasMany ? "" : "none";
+
+                // eventos
+                const onKey = (e) => {
+                    if (e.key === "Escape") cleanup();
+                    if (!hasMany) return;
+                    if (e.key === "ArrowRight" || e.key === " ") show(idx + 1);
+                    if (e.key === "ArrowLeft") show(idx - 1);
+                };
+                const onBackdrop = (e) => {
+                    if (e.target === viewer) cleanup();
+                };
+                const onPrev = () => show(idx - 1);
+                const onNext = () => show(idx + 1);
+                const onImgClick = () => {
+                    if (hasMany) show(idx + 1);
+                };
+
+                function cleanup() {
+                    viewer.close();
+                    document.removeEventListener("keydown", onKey);
+                    viewer.removeEventListener("click", onBackdrop);
+                    viewerImg.removeEventListener("click", onImgClick);
+                    if (hasMany) {
+                        btnPrev.removeEventListener("click", onPrev);
+                        btnNext.removeEventListener("click", onNext);
+                    }
+                }
+
+                show(idx);
+                viewer.showModal();
+
+                // restaura a rolagem DEPOIS que o browser reposiciona o foco
+                requestAnimationFrame(() => {
+                    window.scrollTo(0, savedScroll);
+                    root.style.scrollBehavior = prevScrollBehavior;
+                });
+                // fallback extra (iOS/Safari costuma precisar)
+                setTimeout(() => {
+                    window.scrollTo(0, savedScroll);
+                    root.style.scrollBehavior = prevScrollBehavior;
+                }, 0);
+
+                document.addEventListener("keydown", onKey);
+                viewer.addEventListener("click", onBackdrop);
+                viewerImg.addEventListener("click", onImgClick);
+                if (hasMany) {
+                    btnPrev.addEventListener("click", onPrev);
+                    btnNext.addEventListener("click", onNext);
                 }
             }
 
